@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" style="--theme-color: #262626; --link-color: #262626;">
+<head>
+  <meta charset="UTF-8">
+  <title>Docker二进制部署(离线环境) - ixiao9</title>
+
+  <link rel="icon" href="">
+<!-- <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet"> -->
+<link rel="alternate" type="application/atom+xml" title="ixiao9 - Atom Feed" href="https://info.ixiao9.com/atom.xml">
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFCRR8Q57W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-182385326-1');
+    ga('set', 'dimension1', 'site/ZXiHMvKg1');
+    ga('set', 'dimension2', 'post/48Xgcba5F');
+    ga('send', 'pageview');
+    // gtag('set', {
+    //   'custom_map': {
+    //     'dimension1': 'siteId',
+    //     'dimension2': 'postId',
+    //   }
+    // })
+
+    // gtag('config', 'G-NFCRR8Q57W', {
+    //   'siteId': 'site/ZXiHMvKg1',
+    //   'postId': 'post/48Xgcba5F',
+    // });
+  </script>
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="环境准备
+Docker 要求 CentOS 系统的内核版本高于 3.10 ，查看CentOS 版本
+uname -r
+https://yeasy.gitbook.io/docker_practice/
+
+Docker文件下载
+其他版本下载地...">
+
+  <meta property="og:title" content="Docker二进制部署(离线环境) - ixiao9">
+  <meta property="og:description" content="环境准备
+Docker 要求 CentOS 系统的内核版本高于 3.10 ，查看CentOS 版本
+uname -r
+https://yeasy.gitbook.io/docker_practice/
+
+Docker文件下载
+其他版本下载地...">
+  
+  <meta property="og:url" content="https://info.ixiao9.com/docker-offline-deploy/">
+  <meta property="og:site_name" content="ixiao9">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:alt" content="Docker二进制部署(离线环境)">
+
+  <meta name="gridea:post_id" content="48Xgcba5F">
+
+  <link rel="canonical" href="https://info.ixiao9.com/docker-offline-deploy">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.0.3/styles/a11y-light.css">
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/css/main.css">
+
+</head>
+<body>
+  
+    
+  
+  <div id="page">
+    <div class="mb-16 sticky top-0 z-20 bg-white">
+  <header class="py-4 flex items-baseline justify-between max-w-2xl mx-auto px-2">
+    <h1 class="text-lg text-center font-medium px-4 md:px-0 flex items-center">
+      <div class="site-logo-text font-normal">i</div>
+      <a href="/">ixiao9</a>
+    </h1>
+    <div class="hidden sm:flex justify-center">
+      
+    </div>
+    <div class="flex sm:hidden py-2 px-4 text-center cursor-pointer" @click="openMenu = true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+    </div>
+  </header>
+
+  <div class="fixed top-0 right-0 bottom-0 left-0 bg-white hidden" :style="{
+    display: openMenu ? 'block !important' : 'none',
+  }" v-if="openMenu">
+    <div class="py-4 px-2 flex justify-end" @click="openMenu = false">
+      <div class="flex py-2 px-4 text-center cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+      </div>
+    </div>
+    <div class="flex flex-col p-4">
+      
+    </div>
+  </div>
+</div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-2xl mx-auto px-6 md:px-2">
+        <div class="my-24 text-center">
+          <h1 class="text-2xl font-bold">Docker二进制部署(离线环境)</h1>
+          <div class="post-title-bar mx-auto rounded mt-4"></div>
+          <div class="text-gray-400 mt-4">2021.05.13</div>
+          <div class="flex justify-center mt-4">
+            
+              <a href="https://info.ixiao9.com/tags/Docker" class="inline-flex items-center mr-4 text-sm text-gray-600">
+                <span class="mr-1">#</span>Docker
+              </a>
+            
+              <a href="https://info.ixiao9.com/tags/Linux" class="inline-flex items-center mr-4 text-sm text-gray-600">
+                <span class="mr-1">#</span>Linux
+              </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sticky-bar" class="w-full sticky top-0 z-10 bg-white" style="height: 64px;"></div>
+    <div class="p-4 md:p-16 bg-white">
+      <div class="max-w-2xl mx-auto px-4 flex relative">
+        <section class="post-content flex-1 default-post-content max-w-2xl">
+          <div v-pre>
+            <h3 id="环境准备">环境准备</h3>
+<p>Docker 要求 CentOS 系统的内核版本高于 3.10 ，查看CentOS 版本</p>
+<pre><code>uname -r
+https://yeasy.gitbook.io/docker_practice/
+</code></pre>
+<h3 id="docker文件下载">Docker文件下载</h3>
+<p>其他版本下载地址</p>
+<p>https://download.docker.com/linux/static/stable/x86_64/</p>
+<p>安装二进制包，解压到/usr/bin</p>
+<pre><code>tar zxf docker-17.12.1-ce.tgz
+cp docker/* /usr/bin
+</code></pre>
+<h3 id="创建docker启动脚本">创建Docker启动脚本</h3>
+<pre><code>vim /usr/lib/systemd/system/docker.service
+</code></pre>
+<hr>
+<pre><code>[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network-online.target firewalld.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/dockerd \
+    --insecure-registry=http://172.16.45.9
+ExecReload=/bin/kill -s HUP $MAINPID
+LimitNOFILE=infinity
+LimitNPROC=infinity
+TimeoutStartSec=0
+Delegate=yes
+KillMode=process
+Restart=on-failure
+StartLimitBurst=3
+StartLimitInterval=60s
+
+[Install]
+WantedBy=multi-user.target
+
+</code></pre>
+<blockquote>
+<p>需要什么参数自行添加</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>详解</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>更改Docker文件驱动</td>
+<td>--exec-opt native.cgroupdriver=cgroupfs</td>
+</tr>
+<tr>
+<td>忽略https协议连接目标镜像库</td>
+<td>--insecure-registry=http://172.16.45.9</td>
+</tr>
+<tr>
+<td>修改默认容器存储路径</td>
+<td>--graph /home/docker</td>
+</tr>
+</tbody>
+</table>
+<h3 id="配置daemonjson">配置daemon.json</h3>
+<p>在/etc下创建名为<code>docker</code>的文件夹</p>
+<pre><code>mkdir -p /etc/docker
+vim /etc/docker/daemon.json
+</code></pre>
+<blockquote>
+<p>配置remote API</p>
+</blockquote>
+<pre><code>{
+    &quot;iptables&quot;: false,
+    &quot;hosts&quot;: [&quot;tcp://0.0.0.0:2376&quot;,&quot;unix:///var/run/docker.sock&quot;],
+    &quot;tlsverify&quot;:true,
+    &quot;tlscacert&quot;:&quot;/etc/docker/certs.d/ca-dp.pem&quot;,
+    &quot;tlscert&quot;:&quot;/etc/docker/certs.d/server-cert-dp.pem&quot;,
+    &quot;tlskey&quot;:&quot;/etc/docker/certs.d/server-key-dp.pem&quot;,
+    &quot;registry-mirrors&quot;: [
+    &quot;https://registry.docker-cn.com&quot;,
+    &quot;http://hub-mirror.c.163.com&quot;,
+    &quot;https://docker.mirrors.ustc.edu.cn&quot;
+  ]
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>详解</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置remote API</td>
+<td>&quot;hosts&quot;: [&quot;tcp://0.0.0.0:2376&quot;,&quot;unix:///var/run/docker.sock&quot;],</td>
+</tr>
+<tr>
+<td>是否启用tls</td>
+<td>&quot;tlsverify&quot;:true,</td>
+</tr>
+<tr>
+<td>docker镜像仓库</td>
+<td>&quot;registry-mirrors&quot;</td>
+</tr>
+<tr>
+<td>容器端口绕过的防火墙</td>
+<td>&quot;iptables&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3 id="配置tls">配置tls</h3>
+<p>http://www.dockerinfo.net/1416.html</p>
+<p>创建一个名为auto-tls-certs.sh脚本</p>
+<pre><code class="language-shell">#!/bin/bash
+# 
+# -------------------------------------------------------------
+# 自动创建 Docker TLS 证书
+# -------------------------------------------------------------
+
+# 以下是配置信息
+# --[BEGIN]------------------------------
+
+CODE=&quot;dp&quot;
+IP=&quot;192.168.1.50&quot;
+PASSWORD=&quot;密码&quot;
+COUNTRY=&quot;CN&quot;
+STATE=&quot;BEIJING&quot;
+CITY=&quot;BEIJING&quot;
+ORGANIZATION=&quot;公司&quot;
+ORGANIZATIONAL_UNIT=&quot;Dev&quot;
+COMMON_NAME=&quot;$IP&quot;
+EMAIL=&quot;邮箱&quot;
+
+# --[END]--
+
+# Generate CA key
+openssl genrsa -aes256 -passout &quot;pass:$PASSWORD&quot; -out &quot;ca-key-$CODE.pem&quot; 4096
+# Generate CA
+openssl req -new -x509 -days 365 -key &quot;ca-key-$CODE.pem&quot; -sha256 -out &quot;ca-$CODE.pem&quot; -passin &quot;pass:$PASSWORD&quot; -subj &quot;/C=$COUNTRY/ST=$STATE/L=$CITY/O=$ORGANIZATION/OU=$ORGANIZATIONAL_UNIT/CN=$COMMON_NAME/emailAddress=$EMAIL&quot;
+# Generate Server key
+openssl genrsa -out &quot;server-key-$CODE.pem&quot; 4096
+
+# Generate Server Certs.
+openssl req -subj &quot;/CN=$COMMON_NAME&quot; -sha256 -new -key &quot;server-key-$CODE.pem&quot; -out server.csr
+
+echo &quot;subjectAltName = IP:$IP,IP:127.0.0.1&quot; &gt;&gt; extfile.cnf
+echo &quot;extendedKeyUsage = serverAuth&quot; &gt;&gt; extfile.cnf
+
+openssl x509 -req -days 365 -sha256 -in server.csr -passin &quot;pass:$PASSWORD&quot; -CA &quot;ca-$CODE.pem&quot; -CAkey &quot;ca-key-$CODE.pem&quot; -CAcreateserial -out &quot;server-cert-$CODE.pem&quot; -extfile extfile.cnf
+
+
+# Generate Client Certs.
+rm -f extfile.cnf
+
+openssl genrsa -out &quot;key-$CODE.pem&quot; 4096
+openssl req -subj '/CN=client' -new -key &quot;key-$CODE.pem&quot; -out client.csr
+echo extendedKeyUsage = clientAuth &gt;&gt; extfile.cnf
+openssl x509 -req -days 365 -sha256 -in client.csr -passin &quot;pass:$PASSWORD&quot; -CA &quot;ca-$CODE.pem&quot; -CAkey &quot;ca-key-$CODE.pem&quot; -CAcreateserial -out &quot;cert-$CODE.pem&quot; -extfile extfile.cnf
+
+rm -vf client.csr server.csr
+
+chmod -v 0400 &quot;ca-key-$CODE.pem&quot; &quot;key-$CODE.pem&quot; &quot;server-key-$CODE.pem&quot;
+chmod -v 0444 &quot;ca-$CODE.pem&quot; &quot;server-cert-$CODE.pem&quot; &quot;cert-$CODE.pem&quot;
+
+# 打包客户端证书
+mkdir -p &quot;tls-client-certs-$CODE&quot;
+cp -f &quot;ca-$CODE.pem&quot; &quot;cert-$CODE.pem&quot; &quot;key-$CODE.pem&quot; &quot;tls-client-certs-$CODE/&quot;
+cd &quot;tls-client-certs-$CODE&quot;
+tar zcf &quot;tls-client-certs-$CODE.tar.gz&quot; *
+mv &quot;tls-client-certs-$CODE.tar.gz&quot; ../
+cd ..
+rm -rf &quot;tls-client-certs-$CODE&quot;
+
+# 拷贝服务端证书
+mkdir -p /etc/docker/certs.d
+cp &quot;ca-$CODE.pem&quot; &quot;server-cert-$CODE.pem&quot; &quot;server-key-$CODE.pem&quot; /etc/docker/certs.d/
+</code></pre>
+<p>为脚本添加执行权限</p>
+<pre><code>chmod +x auto-tls-certs.sh
+</code></pre>
+<p>执行脚本即可看到当前目前下生成的配置密钥</p>
+<h3 id="启动docker">启动Docker</h3>
+<pre><code>systemctl daemon-reload
+systemctl restart  docker
+</code></pre>
+<h3 id="测试tls">测试tls</h3>
+<p>然后将客户端的几个pem(tls-client-certs-dp.tar.gz 里面的就是客户端的pem)文件发送到客户端。随便你怎么发送。然后解压,进入到客户端的pem的文件夹,并执行如下命令</p>
+<pre><code>curl https://192.168.1.50:2376/info --cert ./cert-dp.pem --key ./key-dp.pem --cacert ./ca-dp.pem
+</code></pre>
+<p>如果你能成功看到一个json字符串，就表示成功了。</p>
+<p>如果你看到的是curl: (35) gnutls_handshake() failed: Certificate is bad那就是哪里没有配置配置正确,慢慢找问题吧!</p>
+<h3 id="docker-info">docker info</h3>
+<pre><code>Containers: 0
+ Running: 0
+ Paused: 0
+ Stopped: 0
+Images: 0
+Server Version: 18.09.9
+Storage Driver: overlay2
+ Backing Filesystem: xfs
+ Supports d_type: true
+ Native Overlay Diff: true
+Logging Driver: json-file
+Cgroup Driver: cgroupfs
+Plugins:
+ Volume: local
+ Network: bridge host macvlan null overlay
+ Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+Swarm: inactive
+Runtimes: runc
+Default Runtime: runc
+Init Binary: docker-init
+containerd version: 894b81a4b802e4eb2a91d1ce216b8817763c29fb
+runc version: 425e105d5a03fabd737a126ad93d62a9eeede87f
+init version: fec3683
+Security Options:
+ seccomp
+  Profile: default
+Kernel Version: 3.10.0-957.el7.x86_64
+Operating System: CentOS Linux 7 (Core)
+OSType: linux
+Architecture: x86_64
+CPUs: 2
+Total Memory: 3.84GiB
+Name: qwq
+ID: M5LD:CM5Z:PCGP:XCE6:TQEH:PF35:JWBL:23L4:HC6H:CYEL:J7LU:M3AA
+Docker Root Dir: /home/docker
+Debug Mode (client): false
+Debug Mode (server): false
+Registry: https://index.docker.io/v1/
+Labels:
+Experimental: false
+Insecure Registries:
+ 172.16.45.9
+ 127.0.0.0/8
+Live Restore Enabled: false
+Product License: Community Engine
+</code></pre>
+<p>查看网络是否有<code>docker</code>虚拟网卡</p>
+<pre><code>ifconfig  或 ip a 命令
+查看网络是否有名为`docker0`虚拟网卡
+</code></pre>
+<h3 id="安装docker-compose">安装docker-compose</h3>
+<p>上传docker-compose到<code>/usr/bin</code>目录下并授执行权限</p>
+<pre><code>mv docker-compose /usr/local/bin
+chmod +x /usr/local/bin/docker-compose
+ln -s /usr/local/bin/docker-compose /usr/bin/
+</code></pre>
+<p>查看Docker版本是否为1.8:</p>
+<pre><code>docker-compose -v
+</code></pre>
+<p>输出结果</p>
+<pre><code>docker-compose version 1.8.1, build 878cff1
+</code></pre>
+<h3 id="非root权限启动docker">非root权限启动Docker</h3>
+<p>需要在服务器添加<code>docker</code>组</p>
+<pre><code>groupadd docker
+</code></pre>
+<p>将非root权限用户添加到<code>docker</code>用户组内</p>
+<pre><code>usermod -aG docker user1 user2
+             组     用户1 用户2
+</code></pre>
+
+          </div>
+          <div class="py-4 text-gray-600 flex items-center justify-between">
+            <div class="">
+              <div class="text-sm text-gray-300">最后更新于: </div>
+              <div class="text-base font-medium">2021.05.13</div>
+            </div>
+            <!-- <div class="flex items-center text-sm text-gray-600">
+              <i class="ri-eye-line"></i> <span class="ml-2">{{ views }}</span>
+            </div> -->
+          </div>
+          <div>
+            <div id="disqus_thread"></div>
+          </div>
+        </section>
+        
+          <!-- <aside class="sticky toc-container flex-shrink-0 hidden md:block">
+            <div class="text-gray-600 mb-4">目 录</div>
+            <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87">环境准备</a></li>
+<li><a href="#docker%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD">Docker文件下载</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAdocker%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC">创建Docker启动脚本</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEdaemonjson">配置daemon.json</a></li>
+<li><a href="#%E9%85%8D%E7%BD%AEtls">配置tls</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8docker">启动Docker</a></li>
+<li><a href="#%E6%B5%8B%E8%AF%95tls">测试tls</a></li>
+<li><a href="#docker-info">docker info</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85docker-compose">安装docker-compose</a></li>
+<li><a href="#%E9%9D%9Eroot%E6%9D%83%E9%99%90%E5%90%AF%E5%8A%A8docker">非root权限启动Docker</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </aside> -->
+        
+      </div>
+    </div>
+    <div class="py-8 text-gray-300 text-center border-t border-gray-200">
+  Powered by Gridea
+</div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  
+  <script src="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/js/main.js"></script>
+
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  
+    
+<center>© 2020 Copyright 京ICP备17068508号-1
+</br><a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral"><img src="https://www.upyun.com/static/img/%E6%A0%B7%E5%BC%8F%E5%9B%BE.7cf927c.png" height="150" width="300" /></a></center>
+  
+</body>
+</html>

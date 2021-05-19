@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" style="--theme-color: #262626; --link-color: #262626;">
+<head>
+  <meta charset="UTF-8">
+  <title>existdb限制IP访问 - ixiao9</title>
+
+  <link rel="icon" href="">
+<!-- <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet"> -->
+<link rel="alternate" type="application/atom+xml" title="ixiao9 - Atom Feed" href="https://info.ixiao9.com/atom.xml">
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFCRR8Q57W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-182385326-1');
+    ga('set', 'dimension1', 'site/ZXiHMvKg1');
+    ga('set', 'dimension2', 'post/xelkYZ7Iu');
+    ga('send', 'pageview');
+    // gtag('set', {
+    //   'custom_map': {
+    //     'dimension1': 'siteId',
+    //     'dimension2': 'postId',
+    //   }
+    // })
+
+    // gtag('config', 'G-NFCRR8Q57W', {
+    //   'siteId': 'site/ZXiHMvKg1',
+    //   'postId': 'post/xelkYZ7Iu',
+    // });
+  </script>
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="数据存储路径：
+容器化existdb数据存储在/exist/data
+existdb数据库访问限制修复
+修复思路：
+existdb数据库的运行需要依赖于jetty容器。可以针对于jetty容器进行设置访问权限。只允许指定的IP地址访问exi...">
+
+  <meta property="og:title" content="existdb限制IP访问 - ixiao9">
+  <meta property="og:description" content="数据存储路径：
+容器化existdb数据存储在/exist/data
+existdb数据库访问限制修复
+修复思路：
+existdb数据库的运行需要依赖于jetty容器。可以针对于jetty容器进行设置访问权限。只允许指定的IP地址访问exi...">
+  
+  <meta property="og:url" content="https://info.ixiao9.com/existdb-xian-zhiip-fang-wen/">
+  <meta property="og:site_name" content="ixiao9">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:alt" content="existdb限制IP访问">
+
+  <meta name="gridea:post_id" content="xelkYZ7Iu">
+
+  <link rel="canonical" href="https://info.ixiao9.com/existdb-xian-zhiip-fang-wen">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.0.3/styles/a11y-light.css">
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/css/main.css">
+
+</head>
+<body>
+  
+    
+  
+  <div id="page">
+    <div class="mb-16 sticky top-0 z-20 bg-white">
+  <header class="py-4 flex items-baseline justify-between max-w-2xl mx-auto px-2">
+    <h1 class="text-lg text-center font-medium px-4 md:px-0 flex items-center">
+      <div class="site-logo-text font-normal">i</div>
+      <a href="/">ixiao9</a>
+    </h1>
+    <div class="hidden sm:flex justify-center">
+      
+    </div>
+    <div class="flex sm:hidden py-2 px-4 text-center cursor-pointer" @click="openMenu = true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+    </div>
+  </header>
+
+  <div class="fixed top-0 right-0 bottom-0 left-0 bg-white hidden" :style="{
+    display: openMenu ? 'block !important' : 'none',
+  }" v-if="openMenu">
+    <div class="py-4 px-2 flex justify-end" @click="openMenu = false">
+      <div class="flex py-2 px-4 text-center cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+      </div>
+    </div>
+    <div class="flex flex-col p-4">
+      
+    </div>
+  </div>
+</div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-2xl mx-auto px-6 md:px-2">
+        <div class="my-24 text-center">
+          <h1 class="text-2xl font-bold">existdb限制IP访问</h1>
+          <div class="post-title-bar mx-auto rounded mt-4"></div>
+          <div class="text-gray-400 mt-4">2021.05.13</div>
+          <div class="flex justify-center mt-4">
+            
+              <a href="https://info.ixiao9.com/tags/existDB" class="inline-flex items-center mr-4 text-sm text-gray-600">
+                <span class="mr-1">#</span>existDB
+              </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sticky-bar" class="w-full sticky top-0 z-10 bg-white" style="height: 64px;"></div>
+    <div class="p-4 md:p-16 bg-white">
+      <div class="max-w-2xl mx-auto px-4 flex relative">
+        <section class="post-content flex-1 default-post-content max-w-2xl">
+          <div v-pre>
+            <h4 id="数据存储路径">数据存储路径：</h4>
+<p><a href="http://w.ixiao9.com/tag/%E5%AE%B9%E5%99%A8">容器</a>化<a href="http://w.ixiao9.com/tag/existdb">existdb</a>数据存储在/exist/data</p>
+<p>existdb数据库访问限制修复</p>
+<h4 id="修复思路">修复思路：</h4>
+<p>existdb数据库的运行需要依赖于jetty容器。可以针对于jetty容器进行设置访问权限。只允许指定的IP地址访问existdb数据库。其他没有被授权的IP无法访问到数据库的数据信息。</p>
+<h4 id="修复操作">修复操作：</h4>
+<p>找到existdb数据库的配置文件WEB-INF/jetty-web.xml并进行添加权限操作。</p>
+<p>容器内部的jetty-web.xml位于</p>
+<pre><code>/exist/etc/jetty/webapps/portal/WEB-INF/jetty-web.xml
+</code></pre>
+<blockquote>
+<p>jetty-web.xml内容</p>
+<p>注意: 如果直接访问existdb绝对路径可正常访问</p>
+</blockquote>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE Configure PUBLIC &quot;-//Jetty//Configure//EN&quot; &quot;http://www.eclipse.org/jetty/configure_9_3.dtd&quot;&gt;
+
+&lt;Configure id=&quot;testWebapp&quot; class=&quot;org.eclipse.jetty.webapp.WebAppContext&quot;&gt;
+  &lt;Set name=&quot;contextPath&quot;&gt;/example&lt;/Set&gt;
+  &lt;Set name=&quot;war&quot;&gt;&lt;Property name=&quot;jetty.webapps&quot; default=&quot;.&quot;/&gt;/myapp.war&lt;/Set&gt;
+  &lt;Set name=&quot;virtualHosts&quot;&gt;
+    &lt;Array type=&quot;java.lang.String&quot;&gt;
+      &lt;Item&gt;127.0.0.1&lt;/Item&gt;
+      &lt;Item&gt;localhost&lt;/Item&gt;
+      &lt;Item&gt;15.2.32.66&lt;/Item&gt;
+    &lt;/Array&gt;
+  &lt;/Set&gt;
+&lt;/Configure&gt;
+</code></pre>
+<p>标签内，添加红色权限配置信息。完成修改后existdb数据库只接受来自本地和15.2.32.66服务器的访问请求。</p>
+<p>重启容器查看8080端口是否已经存在，如果才能在说明数据库已经启动。此时只有被授权的IP服务器，才可以访问数据库。</p>
+
+          </div>
+          <div class="py-4 text-gray-600 flex items-center justify-between">
+            <div class="">
+              <div class="text-sm text-gray-300">最后更新于: </div>
+              <div class="text-base font-medium">2021.05.13</div>
+            </div>
+            <!-- <div class="flex items-center text-sm text-gray-600">
+              <i class="ri-eye-line"></i> <span class="ml-2">{{ views }}</span>
+            </div> -->
+          </div>
+          <div>
+            <div id="disqus_thread"></div>
+          </div>
+        </section>
+        
+          <!-- <aside class="sticky toc-container flex-shrink-0 hidden md:block">
+            <div class="text-gray-600 mb-4">目 录</div>
+            <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E8%B7%AF%E5%BE%84">数据存储路径：</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D%E6%80%9D%E8%B7%AF">修复思路：</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D%E6%93%8D%E4%BD%9C">修复操作：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </aside> -->
+        
+      </div>
+    </div>
+    <div class="py-8 text-gray-300 text-center border-t border-gray-200">
+  Powered by Gridea
+</div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  
+  <script src="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/js/main.js"></script>
+
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  
+    
+<center>© 2020 Copyright 京ICP备17068508号-1
+</br><a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral"><img src="https://www.upyun.com/static/img/%E6%A0%B7%E5%BC%8F%E5%9B%BE.7cf927c.png" height="150" width="300" /></a></center>
+  
+</body>
+</html>

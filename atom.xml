@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>info.ixiao9.com</id>
+    <title>ixiao9</title>
+    <updated>2021-05-19T06:11:01.167Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="info.ixiao9.com"/>
+    <link rel="self" href="info.ixiao9.com/atom.xml"/>
+    <subtitle>运维小站</subtitle>
+    <rights>All rights reserved 2021, ixiao9</rights>
+    <entry>
+        <title type="html"><![CDATA[existdb限制IP访问]]></title>
+        <id>https://info.ixiao9.com/existdb-xian-zhiip-fang-wen</id>
+        <link href="https://info.ixiao9.com/existdb-xian-zhiip-fang-wen"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[数据存储路径：
+容器化existdb数据存储在/exist/data
+existdb数据库访问限制修复
+修复思路：
+existdb数据库的运行需要依赖于jetty容器。可以针对于jetty容器进行设置访问权限。只允许指定的IP地址访问exi...]]></summary>
+        <content type="html"><![CDATA[<h4 id="数据存储路径">数据存储路径：</h4>
+<p><a href="http://w.ixiao9.com/tag/%E5%AE%B9%E5%99%A8">容器</a>化<a href="http://w.ixiao9.com/tag/existdb">existdb</a>数据存储在/exist/data</p>
+<p>existdb数据库访问限制修复</p>
+<h4 id="修复思路">修复思路：</h4>
+<p>existdb数据库的运行需要依赖于jetty容器。可以针对于jetty容器进行设置访问权限。只允许指定的IP地址访问existdb数据库。其他没有被授权的IP无法访问到数据库的数据信息。</p>
+<h4 id="修复操作">修复操作：</h4>
+<p>找到existdb数据库的配置文件WEB-INF/jetty-web.xml并进行添加权限操作。</p>
+<p>容器内部的jetty-web.xml位于</p>
+<pre><code>/exist/etc/jetty/webapps/portal/WEB-INF/jetty-web.xml
+</code></pre>
+<blockquote>
+<p>jetty-web.xml内容</p>
+<p>注意: 如果直接访问existdb绝对路径可正常访问</p>
+</blockquote>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE Configure PUBLIC &quot;-//Jetty//Configure//EN&quot; &quot;http://www.eclipse.org/jetty/configure_9_3.dtd&quot;&gt;
+
+&lt;Configure id=&quot;testWebapp&quot; class=&quot;org.eclipse.jetty.webapp.WebAppContext&quot;&gt;
+  &lt;Set name=&quot;contextPath&quot;&gt;/example&lt;/Set&gt;
+  &lt;Set name=&quot;war&quot;&gt;&lt;Property name=&quot;jetty.webapps&quot; default=&quot;.&quot;/&gt;/myapp.war&lt;/Set&gt;
+  &lt;Set name=&quot;virtualHosts&quot;&gt;
+    &lt;Array type=&quot;java.lang.String&quot;&gt;
+      &lt;Item&gt;127.0.0.1&lt;/Item&gt;
+      &lt;Item&gt;localhost&lt;/Item&gt;
+      &lt;Item&gt;15.2.32.66&lt;/Item&gt;
+    &lt;/Array&gt;
+  &lt;/Set&gt;
+&lt;/Configure&gt;
+</code></pre>
+<p>标签内，添加红色权限配置信息。完成修改后existdb数据库只接受来自本地和15.2.32.66服务器的访问请求。</p>
+<p>重启容器查看8080端口是否已经存在，如果才能在说明数据库已经启动。此时只有被授权的IP服务器，才可以访问数据库。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Centos 快速安装Gitlab-ce]]></title>
+        <id>https://info.ixiao9.com/anggitlab</id>
+        <link href="https://info.ixiao9.com/anggitlab"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[替换下载源
+使用清华镜像站来加速rpm包下载
+https://mirrors.tuna.tsinghua.edu.cn/help/gitlab-ce/
+新建 /etc/yum.repos.d/gitlab-ce.repo， 内容为
+[git...]]></summary>
+        <content type="html"><![CDATA[<h3 id="替换下载源">替换下载源</h3>
+<p>使用清华镜像站来加速rpm包下载<br>
+https://mirrors.tuna.tsinghua.edu.cn/help/gitlab-ce/</p>
+<p>新建 <code>/etc/yum.repos.d/gitlab-ce.repo， </code>内容为</p>
+<pre><code>[gitlab-ce]
+name=Gitlab CE Repository
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el$releasever/
+gpgcheck=0
+enabled=1
+</code></pre>
+<p>再执行</p>
+<pre><code>sudo yum makecache
+sudo yum install gitlab-ce
+</code></pre>
+<h3 id="部署成功输出">部署成功输出</h3>
+<pre><code>
+       *.                  *.
+      ***                 ***
+     *****               *****
+    .******             *******
+    ********            ********
+   ,,,,,,,,,***********,,,,,,,,,
+  ,,,,,,,,,,,*********,,,,,,,,,,,
+  .,,,,,,,,,,,*******,,,,,,,,,,,,
+      ,,,,,,,,,*****,,,,,,,,,.
+         ,,,,,,,****,,,,,,
+            .,,,***,,,,
+                ,*,.
+  
+
+
+     _______ __  __          __
+    / ____(_) /_/ /   ____ _/ /_
+   / / __/ / __/ /   / __ `/ __ \
+  / /_/ / / /_/ /___/ /_/ / /_/ /
+  \____/_/\__/_____/\__,_/_.___/
+  
+
+Thank you for installing GitLab!
+GitLab was unable to detect a valid hostname for your instance.
+Please configure a URL for your GitLab instance by setting `external_url`
+configuration in /etc/gitlab/gitlab.rb file.
+Then, you can start your GitLab instance by running the following command:
+  sudo gitlab-ctl reconfigure
+
+For a comprehensive list of configuration options please see the Omnibus GitLab readme
+https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md
+</code></pre>
+<h3 id="修改配置文件">修改配置文件</h3>
+<p>安装部署后需要编辑文件修改gitlab IP配置</p>
+<pre><code>vim /etc/gitlab/gitlab.rb
+</code></pre>
+<p>找到external_url字段</p>
+<pre><code>external_url 'http://gitlab.example.com'
+修改为
+external_url 'http://服务器IP'
+</code></pre>
+<h3 id="启动gitlab-ce">启动Gitlab-ce</h3>
+<pre><code>执行gitlab-ctl reconfigure
+</code></pre>
+<p>d</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Cassandra数据备份与迁移]]></title>
+        <id>https://info.ixiao9.com/cassandra</id>
+        <link href="https://info.ixiao9.com/cassandra"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[
+注意备份的时候schema也要备份一下，否则不能恢复快照！
+
+单点备份
+1.备份单个keyspace schema
+cqlsh -e &quot;DESC KEYSPACE user&quot; &gt; user_schema.cql
+...]]></summary>
+        <content type="html"><![CDATA[<blockquote>
+<p>注意备份的时候schema也要备份一下，否则不能恢复快照！</p>
+</blockquote>
+<h2 id="单点备份">单点备份</h2>
+<p>1.备份单个keyspace schema<br>
+<code>cqlsh -e &quot;DESC KEYSPACE user&quot; &gt; user_schema.cql</code><br>
+2.备份整个database schema<br>
+<code>cqlsh -e &quot;DESC SCHEMA&quot; &gt; db_schema.cql</code></p>
+<p>3.导入keyspace schema<br>
+在 user_schema.cql所在的目录下打开cqlsh:<br>
+<code>source 'user_schema.cql'</code><br>
+4.导入database schema:<br>
+在db_schema.cql所在的目录下打开cqlsh:<br>
+<code>source 'db_schema.cql'</code><br>
+5.备份单个keyspace数据<br>
+<code>bin/nodetool snapshot -t 20171130 user</code><br>
+6.备份所有的keyspace<br>
+<code>bin/nodetool snapshot -t 20171130</code></p>
+<p>-t后面指定快照的名字，备份好的数据在这个目录下<br>
+<code>$CASSANDRA_HOME/data/yourkeyspace/table-uuid/snapshots/20171130</code></p>
+<p>7.使用脚本将快照拷贝出来<br>
+将如下脚本保存为copy.sh，注意修改keyspacePath和dstKeyspacePath的值。 <strong>这个脚本只拷贝某一个keyspace的快照</strong></p>
+<pre><code>#!/bin/bashkeyspacePath=&quot;cassandra-3.11.1/data/data/your_keysapce_name&quot;currentIp=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`dstKeyspacePath=&quot;/home/master/beifen/$currentIp/my_backup&quot;echo $currentIpif [ ! -x &quot;$dstKeyspacePath&quot; ]; then      mkdir -p $dstKeyspacePathfi for dir in `ls $keyspacePath`; do (    currentTableName=`basename $dir`    echo &quot;currentTableName=$currentTableName&quot;    tableDstPath=&quot;$dstKeyspacePath/$currentTableName&quot;    echo &quot;tableDstPath=$tableDstPath&quot;    if [ ! -x &quot;$tableDstPath&quot; ]; then          mkdir -p $tableDstPath    fi     cp -r &quot;$keyspacePath/$dir/snapshots/&quot; $tableDstPath); done
+</code></pre>
+<p>给脚本赋予执行权限：<br>
+<code>chmod +x ./copy.sh</code><br>
+执行脚本：<br>
+<code>./copy.sh</code><br>
+8.恢复快照<br>
+将dstKeyspacePath下的SSTable(table-uuid)目录拷贝到新的cassandra的Data目录下，执行如下命令即可<br>
+<code>bin/nodetool refresh</code></p>
+<hr>
+<h2 id="集群备份">集群备份</h2>
+<p>直接从一个集群导到另一个集群：</p>
+<p>1.memTable数据刷新到SSTable<br>
+<code>bin/nodetool flush</code></p>
+<p>2.源集群导出schema</p>
+<p><code>cqlsh 192.168.40.x -e &quot;DESC KEYSPACE your_keyspace&quot; &gt; your_keyspace_schema.cql</code></p>
+<p>将<code>your_keyspace_schema.cql</code> 拷贝到目录集群某个目录下，然后进入到这个目录，打开cqlsh。<br>
+<code>source 'your_keyspace_schema.cql'</code></p>
+<p>3.使用脚本直接导数据<br>
+<strong>该脚本只能导一个keyspace</strong><br>
+将如下脚本保存为 <code>migrate.sh</code>，注意修改keyspacePath和dstClusterIP。keyspacePath是源集群的keyspace所在目录，dstClusterIP是目标集群的IP，可以是多个。</p>
+<pre><code>#!/bin/bashkeyspacePath=&quot;cassandra-3.11.1/data/data/your_keyspace&quot;dstClusterIP=192.168.40.1,192.168.40.2,192.168.40.3for dir in `ls $keyspacePath`; do (    sstableloader -d $dstClusterIP -t 100 &quot;$keyspacePath/$dir&quot;); done
+</code></pre>
+<p>脚本赋上执行权限：<br>
+<code>chmod +x ./migrate.sh</code><br>
+执行脚本，（请确保你的<code>PATH</code>环境变量里配置过Cassandra的路径）<br>
+<code>./migrate.sh</code></p>
+<p>如果要备份所有的数据：</p>
+<pre><code>#!/bin/bashsrcDataPath=&quot;/data/janus/apache-cassandra-3.11.1/data/data&quot;# 可以是多个IP，逗号分隔dstClusterIP=192.168.40.13 for keyspacePath in `ls $srcDataPath`; do (    echo &quot;currentkeyspace=$keyspacePath&quot;    for table in `ls $srcDataPath/$keyspacePath`; do (        echo &quot;$srcDataPath/$keyspacePath/$table&quot;        sstableloader -d $dstClusterIP -t 100 &quot;$srcDataPath/$keyspacePath/$table&quot;    );done);done
+</code></pre>
+<p>dstClusterIP 后面指定的是目标集群的IP，可以是多个IP。根据你的实际情况修改之。</p>
+<p>srcDataPath 是源集群的数据目录。根据你的实际情况修改之。</p>
+<p>执行脚本的时候，控制台会打印出当前备份的进度。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[搭建ELK详细-一（准备篇）]]></title>
+        <id>https://info.ixiao9.com/elkdajian1</id>
+        <link href="https://info.ixiao9.com/elkdajian1"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[文件准备
+本次演示文件版本为
+elasticsearch-6.6.1.tar.gz
+Logstash-6.6.1.tar.gz
+kibana-6.6.1.tar.gz
+统一下载地址
+https://www.elastic.co/cn/dow...]]></summary>
+        <content type="html"><![CDATA[<h5 id="文件准备">文件准备</h5>
+<pre><code>本次演示文件版本为
+elasticsearch-6.6.1.tar.gz
+Logstash-6.6.1.tar.gz
+kibana-6.6.1.tar.gz
+统一下载地址
+https://www.elastic.co/cn/downloads/
+jdk-8u241-linux-x64.rpm （自行下载）
+</code></pre>
+<h5 id="简介">简介</h5>
+<p>ELK是三个开源软件的缩写，分别表示：Elasticsearch , Logstash, Kibana</p>
+<p>1、Elasticsearch是个开源分布式搜索引擎，提供搜集、分析、存储数据三大功能。</p>
+<p>它的特点有：分布式，零配置，自动发现，索引自动分片，索引副本机制，restful风格接口，多数据源，自动搜索负载等。</p>
+<p>2、Logstash 主要是用来日志的搜集、分析、过滤日志的工具，支持大量的数据获取方式。</p>
+<p>一般工作方式为c/s架构，client端安装在需要收集日志的主机上，server端负责将收到的各节点日志进行过滤、修改等操作在一并发往elasticsearch上去。</p>
+<p>3、Kibana可以为 Logstash 和 ElasticSearch 提供的日志分析友好的 Web 界面，可以帮助汇总、分析和搜索重要数据日志。</p>
+<p>4、FileBeat，它是一个轻量级的日志收集处理工具(Agent)，Filebeat占用资源少，适合于在各个服务器上搜集日志后传输给Logstash，官方也推荐此工具。</p>
+<h5 id="虚机准备">虚机准备</h5>
+<p>CentOS7.5  可连接互联网</p>
+<pre><code>192.168.10.11   1c8g20g   elasticsearch  
+
+192.168.10.12   1c8g20g   Logstash   kibana
+</code></pre>
+<h5 id="环境准备">环境准备</h5>
+<h6 id="1优化文件句柄数可用进程数">1.优化文件句柄数可用进程数</h6>
+<p>新版 Elasticsearch 要求其可用的文件句柄至少为 65536，同時要求其进程数限制至少为 2048，对应下面两个报错信息</p>
+<ol>
+<li>max file descriptors [4096] for elasticsearch process is too low, increase to at least [65536]；</li>
+<li>max number of threads [1024] for user [es] is too low, increase to at least [2048]。</li>
+</ol>
+<pre><code>vim /etc/security/limits.conf
+
+#最后添加以下内容
+* soft nofile 655360
+* hard nofile 655360
+* soft nproc  655360
+* hard nproc  655360
+* soft memlock unlimited
+* hard memlock unlimited
+</code></pre>
+<h6 id="2修改内核交换">2.修改内核交换</h6>
+<p>为了避免不必要的磁盘和內存交换，影响效率，需要将 <code>vm.swappiness</code> 修改为 1。</p>
+<p>此外需要修改最大虚拟內存 <code>vm.max_map_count</code> 防止启动时报错：<br>
+max virtual memory areas vm.max_map_count [65530] likely too low, increase to at least [262144]。</p>
+<pre><code>vim /etc/sysctl.conf
+#添加
+vm.swappiness = 1
+vm.max_map_count = 655360
+
+#保存退出执行
+sysctl -p   # 立即生效
+</code></pre>
+<h6 id="3关闭swap">3.关闭swap</h6>
+<p>两者选其一</p>
+<pre><code>#（1）临时关闭swap分区, 重启失效;
+swapoff -a
+
+#（2）永久关闭swap分区
+
+sed -ri 's/.*swap.*/#&amp;/' /etc/fstab
+</code></pre>
+<h6 id="4同步时间">4.同步时间</h6>
+<p>Linux服务器运行久时，系统时间就会存在一定的误差，一般情况下可以使用date命令进行时间设置，但在做数据库集群分片等操作时对多台机器的时间差是有要求的，此时就需要使用ntpdate进行时间同步</p>
+<pre><code>#未安装ntpdate
+yum install -y ntpdate
+#同步时间服务器
+ntpdate ntp1.aliyun.com
+</code></pre>
+<h6 id="5为elk创建用户">5.为ELK创建用户</h6>
+<p>elasticsearch不支持使用<code>root</code>用户启动<br>
+需要创建一个用户来启动</p>
+<pre><code>useradd elk
+
+</code></pre>
+<h6 id="6安装jdk">6.安装JDK</h6>
+<p>将jdk-8u241-linux-x64.rpm上传至服务器<br>
+安装jdk</p>
+<pre><code>rpm -ivh jdk-8u241-linux-x64.rpm
+</code></pre>
+<p>配置环境变量</p>
+<pre><code>#vim /etc/profile.d/java.sh
+JAVA_HOME=/opt/java/jdk
+JRE_HOME=/opt/java/jdk/jre
+CLASSPATH=$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+</code></pre>
+<p>使用环境变量生效</p>
+<pre><code>source /etc/profile
+</code></pre>
+<p>检测是否成功<br>
+敲击<code>java -version</code>命令回车 将会输出以下内容</p>
+<pre><code>[root@qwq ~]# java -version
+java version &quot;1.8.0_241&quot;
+Java(TM) SE Runtime Environment (build 1.8.0_241-b07)
+Java HotSpot(TM) 64-Bit Server VM (build 25.241-b07, mixed mode)
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[搭建ELK详细-二（Elasticsearch）]]></title>
+        <id>https://info.ixiao9.com/elkdajian2</id>
+        <link href="https://info.ixiao9.com/elkdajian2"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[确保你的实验机器全部都执行过
+搭建ELK详细 一（准备篇）
+本节章将要搭建Elasticsearch确认没有遗漏准备篇环境否则将会有错误导致无法正常进行
+本节章将全部命令将在192.168.10.12上进行
+准备
+上传文件至/usr/loc...]]></summary>
+        <content type="html"><![CDATA[<p>确保你的实验机器全部都执行过<br>
+<a href="https://www.cnblogs.com/iXiAo9/p/13625204.html">搭建ELK详细 一（准备篇）</a><br>
+本节章将要搭建Elasticsearch确认没有遗漏准备篇环境否则将会有错误导致无法正常进行<br>
+本节章将全部命令将在<code>192.168.10.12</code>上进行</p>
+<h4 id="准备">准备</h4>
+<p>上传文件至<code>/usr/local/</code><br>
+解压并改名</p>
+<pre><code>#解压
+tar zxf elasticsearch-6.6.1.tar.gz -C /usr/local/
+#改名
+mv elasticsearch-6.6.1/ elasticsearch
+chown elk:elk elasticsearch
+</code></pre>
+<h4 id="修改配置文件">修改配置文件</h4>
+<p>注意：如果你不懂我为什么更改这些配置文件请参考<br>
+<a href="https://blog.51cto.com/dianel/2306693">Elasticsearch配置文件详解</a></p>
+<pre><code>vim elasticsearch/config/elasticsearch.yml
+
+# ======================== Elasticsearch Configuration =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please consult the documentation for further information on configuration options:
+# https://www.elastic.co/guide/en/elasticsearch/reference/index.html
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: elk-cluster
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: node-1
+#
+# Add custom attributes to the node:
+#
+#node.attr.rack: r1
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: /path/to/data
+#
+# Path to log files:
+#
+path.logs: /path/to/logs
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+bootstrap.memory_lock: true
+#
+# Make sure that the heap size is set to about half the memory available
+# on the system and that the owner of the process is allowed to use this
+# limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# Set the bind address to a specific IP (IPv4 or IPv6):
+#
+network.host: 192.168.10.12
+#
+# Set a custom port for HTTP:
+#
+http.port: 9200
+#
+# For more information, consult the network module documentation.
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when new node is started:
+# The default list of hosts is [&quot;127.0.0.1&quot;, &quot;[::1]&quot;]
+#
+#discovery.zen.ping.unicast.hosts: [&quot;host1&quot;, &quot;host2&quot;]
+discovery.zen.ping.unicast.hosts: [&quot;192.168.10.12&quot;]
+# Prevent the &quot;split brain&quot; by configuring the majority of nodes (total number of master-eligible nodes / 2 + 1):
+#
+#discovery.zen.minimum_master_nodes: 
+#
+# For more information, consult the zen discovery module documentation.
+#
+# ---------------------------------- Gateway -----------------------------------
+#
+# Block initial recovery after a full cluster restart until N nodes are started:
+#
+#gateway.recover_after_nodes: 3
+#
+# For more information, consult the gateway module documentation.
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Require explicit names when deleting indices:
+#
+#action.destructive_requires_name: true
+
+</code></pre>
+<h4 id="启动elasticsearch">启动Elasticsearch</h4>
+<p>前台启动一下是否有问题</p>
+<pre><code>[root@qwq elasticsearch]# su elk
+[root@qwq elasticsearch]# ./bin/elasticsearch
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[加速GitHub下载！]]></title>
+        <id>https://info.ixiao9.com/proxy-github</id>
+        <link href="https://info.ixiao9.com/proxy-github"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[
+Git克隆慢？
+外网源码包没速度？
+试试这个
+
+https://g.widora.cn/
+注意：暂不支持超过2GB的仓库ε=ε=ε=┏(゜ロ゜;)┛
+...]]></summary>
+        <content type="html"><![CDATA[<p><img src="https://upload-images.jianshu.io/upload_images/16753854-0221d4d4ae76ea49.jpg" alt="image" loading="lazy"><br>
+Git克隆慢？<br>
+外网源码包没速度？<br>
+试试这个<br>
+<img src="https://upload-images.jianshu.io/upload_images/6568097-9796d1b520e9defd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="25135900.png" loading="lazy"></p>
+<p>https://g.widora.cn/<br>
+注意：暂不支持超过2GB的仓库ε=ε=ε=┏(゜ロ゜;)┛</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[kubeadm快速部署kubernetes]]></title>
+        <id>https://info.ixiao9.com/fast-ops-kubeadm</id>
+        <link href="https://info.ixiao9.com/fast-ops-kubeadm"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[kubeadm快速部署kubernetes
+[TOC]
+环境初始化
+
+
+
+IP
+角色
+安装软件
+
+
+
+
+192.168.1.3
+k8s-Master
+kube-apiserver kube-schduler kube-controller-...]]></summary>
+        <content type="html"><![CDATA[<h1 id="kubeadm快速部署kubernetes">kubeadm快速部署kubernetes</h1>
+<p>[TOC]</p>
+<h4 id="环境初始化">环境初始化</h4>
+<table>
+<thead>
+<tr>
+<th><strong>IP</strong></th>
+<th><strong>角色</strong></th>
+<th><strong>安装软件</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>192.168.1.3</td>
+<td>k8s-Master</td>
+<td>kube-apiserver <br/>kube-schduler <br/>kube-controller-manager <br/>docker <br/>flannel <br/>kubelet</td>
+</tr>
+<tr>
+<td>192.168.1.4</td>
+<td>k8s-node01</td>
+<td>kubelet <br/>kube-proxy <br/>docker <br/>flannel<br/>nginx<br/>dashboard</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>服务器最低配置要求</p>
+</blockquote>
+<p>内存4G</p>
+<p>处理器1</p>
+<p>每个处理器核心数2</p>
+<p>不满足要求会报错</p>
+<blockquote>
+<p>以下所有操作，在三台节点全部执行</p>
+</blockquote>
+<h5 id="关闭防火墙及selinux">关闭防火墙及selinux</h5>
+<pre><code class="language-shell">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
+$ sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config  &amp;&amp; setenforce 0
+</code></pre>
+<h5 id="关闭-swap-分区">关闭 swap 分区</h5>
+<pre><code class="language-shell">$ swapoff -a $ sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab 
+</code></pre>
+<h5 id="分别在其他主机上设置主机名以及配置hosts">分别在其他主机上设置主机名以及配置hosts</h5>
+<pre><code class="language-shell">$ hostnamectl set-hostname k8s-master
+$ hostnamectl set-hostname k8s-node01
+$ hostnamectl set-hostname k8s-&quot;替换&quot;
+</code></pre>
+<h5 id="在所有主机增加hosts">在所有主机增加hosts</h5>
+<pre><code class="language-shell">主masterIP k8s-master
+从nodeIP k8s-node01
+</code></pre>
+<h5 id="内核调整将桥接的ipv4流量传递到iptables的链">内核调整,将桥接的IPv4流量传递到iptables的链</h5>
+<pre><code class="language-shell">cat &gt; /etc/sysctl.d/k8s.conf &lt;&lt;EOF
+
+net.bridge.bridge-nf-call-ip6tables = 1
+
+net.bridge.bridge-nf-call-iptables = 1
+
+EOF
+
+sysctl --system
+</code></pre>
+<h5 id="设置系统时区并同步时间服务器">设置系统时区并同步时间服务器</h5>
+<pre><code class="language-shell">$ yum install -y ntpdate
+$ ntpdate time.windows.com
+</code></pre>
+<h5 id="docker安装">docker安装</h5>
+<pre><code class="language-shell">$ wget https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo -O /etc/yum.repos.d/docker-ce.repo
+$ yum -y install docker-ce-18.06.1.ce-3.el7
+</code></pre>
+<h5 id="修改docker文件驱动">修改docker文件驱动</h5>
+<p>文件驱动默认由<code>systemd</code>改成<code>cgroupfs</code>, 而我们安装的<code>docker</code>使用的文件驱动是<code>systemd</code>, 造成不一致, 导致镜像无法启动</p>
+<p>docker info查看</p>
+<pre><code class="language-shell">$ Cgroup Driver: systemd
+</code></pre>
+<p>修改或创建/etc/docker/daemon.json，加入下面的内容：</p>
+<pre><code class="language-shell">$ mkdir -p /etc/docker/
+$ vi /etc/docker/daemon.json
+{
+  &quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]
+}
+</code></pre>
+<p>启动docker:</p>
+<pre><code class="language-shell">$ systemctl enable docker &amp;&amp; systemctl start docker
+$ docker --version
+Docker version 18.06.1-ce, build e68fc7a 
+</code></pre>
+<h5 id="添加kubernetes-yum软件源">添加kubernetes YUM软件源</h5>
+<pre><code class="language-shell">cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt; EOF
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+</code></pre>
+<h4 id="安装kubernetes组件">安装kubernetes组件</h4>
+<h5 id="安装kubeadmkubelet和kubectl">安装kubeadm,kubelet和kubectl</h5>
+<blockquote>
+<p>所有主机都需要安装， 由于版本更新频繁，这里指定版本号部署</p>
+</blockquote>
+<pre><code class="language-shell">$ yum install -y kubelet-1.15.0 kubeadm-1.15.0 kubectl-1.15.0
+$ systemctl enable kubelet
+</code></pre>
+<h5 id="上传镜像并加载">上传镜像并加载</h5>
+<h5 id="部署kubernetes-master">部署Kubernetes Master</h5>
+<blockquote>
+<p>只需要在Master 节点执行</p>
+</blockquote>
+<pre><code class="language-shell">$ kubeadm init \
+--apiserver-advertise-address=主节点IP \
+--image-repository registry.aliyuncs.com/google_containers \
+--kubernetes-version v1.15.0 \
+--service-cidr=10.1.0.0/16 \
+--pod-network-cidr=10.244.0.0/16
+</code></pre>
+<h5 id="执行效果">执行效果</h5>
+<pre><code class="language-shell">[init] Using Kubernetes version: v1.15.0
+[preflight] Running pre-flight checks
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[kubelet-start] Writing kubelet environment file with flags to file &quot;/var/lib/kubelet/kubeadm-flags.env&quot;
+[kubelet-start] Writing kubelet configuration to file &quot;/var/lib/kubelet/config.yaml&quot;
+[kubelet-start] Activating the kubelet service
+[certs] Using certificateDir folder &quot;/etc/kubernetes/pki&quot;
+[certs] Generating &quot;etcd/ca&quot; certificate and key
+[certs] Generating &quot;etcd/server&quot; certificate and key
+[certs] etcd/server serving cert is signed for DNS names [k8s-master localhost] and IPs [192.168.1.3 127.0.0.1 ::1]
+[certs] Generating &quot;etcd/peer&quot; certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [k8s-master localhost] and IPs [192.168.1.3 127.0.0.1 ::1]
+[certs] Generating &quot;apiserver-etcd-client&quot; certificate and key
+[certs] Generating &quot;etcd/healthcheck-client&quot; certificate and key
+[certs] Generating &quot;front-proxy-ca&quot; certificate and key
+[certs] Generating &quot;front-proxy-client&quot; certificate and key
+[certs] Generating &quot;ca&quot; certificate and key
+[certs] Generating &quot;apiserver&quot; certificate and key
+[certs] apiserver serving cert is signed for DNS names [k8s-master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.1.0.1 192.168.1.3]
+[certs] Generating &quot;apiserver-kubelet-client&quot; certificate and key
+[certs] Generating &quot;sa&quot; key and public key
+[kubeconfig] Using kubeconfig folder &quot;/etc/kubernetes&quot;
+[kubeconfig] Writing &quot;admin.conf&quot; kubeconfig file
+[kubeconfig] Writing &quot;kubelet.conf&quot; kubeconfig file
+[kubeconfig] Writing &quot;controller-manager.conf&quot; kubeconfig file
+[kubeconfig] Writing &quot;scheduler.conf&quot; kubeconfig file
+[control-plane] Using manifest folder &quot;/etc/kubernetes/manifests&quot;
+[control-plane] Creating static Pod manifest for &quot;kube-apiserver&quot;
+[control-plane] Creating static Pod manifest for &quot;kube-controller-manager&quot;
+[control-plane] Creating static Pod manifest for &quot;kube-scheduler&quot;
+[etcd] Creating static Pod manifest for local etcd in &quot;/etc/kubernetes/manifests&quot;
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory &quot;/etc/kubernetes/manifests&quot;. This can take up to 4m0s
+[apiclient] All control plane components are healthy after 30.502915 seconds
+[upload-config] Storing the configuration used in ConfigMap &quot;kubeadm-config&quot; in the &quot;kube-system&quot; Namespace
+[kubelet] Creating a ConfigMap &quot;kubelet-config-1.15&quot; in namespace kube-system with the configuration for the kubelets in the cluster
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node k8s-master as control-plane by adding the label &quot;node-role.kubernetes.io/master=''&quot;
+[mark-control-plane] Marking the node k8s-master as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: p9a3vu.oscq5han2y5z5wfr
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the &quot;cluster-info&quot; ConfigMap in the &quot;kube-public&quot; namespace
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run &quot;kubectl apply -f [podnetwork].yaml&quot; with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+#下面是将node节点加入master组命令
+kubeadm join 192.168.1.3:6443 --token p9a3vu.oscq5han2y5z5wfr \
+    --discovery-token-ca-cert-hash sha256:bc102f35fc9049eabfe12b91bdeac18cb4f10b410b5170a8d5f7fd6cf5e986cf 
+</code></pre>
+<h5 id="token问题默认跳过">token问题(默认跳过)</h5>
+<p>默认token的有效期为24小时，当过期之后，该token就不可用了，如果后续有nodes节点加入，重新生成新的token</p>
+<pre><code class="language-shell">$ kubeadm token create
+$ kubeadm token list
+</code></pre>
+<h5 id="根据提示创建文件夹">根据提示创建文件夹</h5>
+<pre><code class="language-shell">$ mkdir -p $HOME/.kube
+$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre>
+<h5 id="获取ca证书sha256编码hash值">获取ca证书sha256编码hash值</h5>
+<pre><code class="language-shell">$ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2&gt;/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+</code></pre>
+<h4 id="加入kubernetes-node">加入Kubernetes Node</h4>
+<blockquote>
+<p>node上都要执行加组命令</p>
+</blockquote>
+<h5 id="节点加入集群">节点加入集群</h5>
+<pre><code class="language-shell">kubeadm join 主IP:6443 --token 替换自己的token \
+    --discovery-token-ca-cert-hash 
+sha256:替换bc102f35fc9049eabfe12b91bdeac18cb4f10b410b5170a8d5f7fd6cf5e986cf 
+</code></pre>
+<h5 id="安装网络插件">安装网络插件</h5>
+<blockquote>
+<p>只需要在Master 节点执行</p>
+</blockquote>
+<p>将<code>kube-flannel.yml</code>文件上传到主节点中</p>
+<p>执行部署脚本</p>
+<pre><code class="language-shell">kubectl apply -f kube-flannel.yml
+</code></pre>
+<p>查看集群的node状态，安装完网络工具之后，只有显示如下状态，所有节点全部都Ready好了之后才能继续后面的操作</p>
+<pre><code class="language-shell">$ kubectl get nodes
+NAME         STATUS   ROLES    AGE     VERSION
+k8s-master   Ready    master   37m     v1.15.0
+k8s-node01   Ready    &lt;none&gt;   5m22s   v1.15.0
+k8s-node02   Ready    &lt;none&gt;   5m18s   v1.15.0
+$ kubectl get pod -n kube-system
+NAME                                 READY   STATUS    RESTARTS   AGE
+coredns-bccdc95cf-h2ngj              1/1     Running   0          14m
+coredns-bccdc95cf-m78lt              1/1     Running   0          14m
+etcd-k8s-master                      1/1     Running   0          13m
+kube-apiserver-k8s-master            1/1     Running   0          13m
+kube-controller-manager-k8s-master   1/1     Running   0          13m
+kube-flannel-ds-amd64-j774f          1/1     Running   0          9m48s
+kube-flannel-ds-amd64-t8785          1/1     Running   0          9m48s
+kube-flannel-ds-amd64-wgbtz          1/1     Running   0          9m48s
+kube-proxy-ddzdx                     1/1     Running   0          14m
+kube-proxy-nwhzt                     1/1     Running   0          14m
+kube-proxy-p64rw                     1/1     Running   0          13m
+kube-scheduler-k8s-master            1/1     Running   0          13m
+</code></pre>
+<p>只有全部都为1/1则可以成功执行后续步骤 如果flannel需检查网络情况，重新进行如下操作</p>
+<pre><code class="language-shell">kubectl delete -f kube-flannel.yml
+</code></pre>
+<p>然后重新执行部署脚本</p>
+<pre><code class="language-shell">kubectl apply -f kube-flannel.yml
+</code></pre>
+<h4 id="测试kubernetes集群">测试Kubernetes集群</h4>
+<p>在Kubernetes集群中创建一个pod，然后暴露端口，验证是否正常访问：</p>
+<pre><code class="language-shell">$ kubectl create deployment nginx --image=nginx
+deployment.apps/nginx created
+
+$ kubectl expose deployment nginx --port=80 --type=NodePort
+service/nginx exposed
+
+$ kubectl get pods,svc
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/nginx-554b9c67f9-wf5lm   1/1     Running   0          24s
+
+NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+service/kubernetes   ClusterIP   10.1.0.1       &lt;none&gt;        443/TCP        39m
+service/nginx        NodePort    10.1.224.251   &lt;none&gt;        80:30962/TCP   9
+</code></pre>
+<p>访问地址：http://NodeIP:Port ,此例就是：http://192.168.1.3:30962</p>
+<h4 id="扩展">扩展</h4>
+<h5 id="部署-dashboards">部署 Dashboards</h5>
+<p>上传<code>kubernetes-dashboard.yaml</code>文件</p>
+<p>执行部署命令</p>
+<pre><code class="language-shell">$ kubectl create -f kubernetes-dashboard.yaml
+</code></pre>
+<p>创建完成后，检查相关服务运行状态</p>
+<pre><code class="language-shell">$ kubectl get deployment kubernetes-dashboard -n kube-system
+
+$ kubectl get pods -n kube-system -o wide
+
+$ kubectl get services -n kube-system
+
+$ netstat -ntlp|grep 30001
+</code></pre>
+<p>在Firefox浏览器输入Dashboard访问地址</p>
+<blockquote>
+<p>密钥页面未配置之前无法打开，务必使用Firefox浏览器打开</p>
+</blockquote>
+<p>查看访问Dashboard的认证令牌</p>
+<pre><code class="language-shell">$ kubectl create serviceaccount  dashboard-admin -n kube-system
+
+$ kubectl create clusterrolebinding  dashboard-admin --clusterrole=cluster-admin --serviceaccount=kube-system:dashboard-admin
+
+$ kubectl describe secrets -n kube-system $(kubectl -n kube-system get secret | awk '/dashboard-admin/{print $1}')
+</code></pre>
+<p>使用输出的token登录Dashboard</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[kubernetes-Dashboard乱码]]></title>
+        <id>https://info.ixiao9.com/kubernetes-dashboard-luan-ma</id>
+        <link href="https://info.ixiao9.com/kubernetes-dashboard-luan-ma"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[
+谷歌浏览打开页面
+请使用https协议打开
+
+
+无法正常访问页面
+
+火狐浏览打开页面
+
+
+页面乱码
+再次打开
+
+注意蓝色地方，要使用https协议来打开页面
+...]]></summary>
+        <content type="html"><![CDATA[<blockquote>
+<p>谷歌浏览打开页面<br>
+请使用https协议打开</p>
+</blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/6568097-6cb4a41d7af8ed74.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"><br>
+无法正常访问页面</p>
+<blockquote>
+<p>火狐浏览打开页面</p>
+</blockquote>
+<p><img src="https://upload-images.jianshu.io/upload_images/6568097-0740c9df0283a278.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"><br>
+页面乱码</p>
+<p>再次打开<br>
+<img src="https://upload-images.jianshu.io/upload_images/6568097-37c7c41cd78a662c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"><br>
+注意蓝色地方，要使用https协议来打开页面</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Window配置Vscode+Python3-7开发环境]]></title>
+        <id>https://info.ixiao9.com/Vscode+Python3-7</id>
+        <link href="https://info.ixiao9.com/Vscode+Python3-7"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[用VScode配置Python开发环境
+
+软件准备
+Python：https://www.python.org/downloads/
+VScode：https://code.visualstudio.com/
+软件安装
+安装python
+首...]]></summary>
+        <content type="html"><![CDATA[<h1 id="用vscode配置python开发环境">用VScode配置Python开发环境</h1>
+<p><img src="https://upload-images.jianshu.io/upload_images/6568097-6fcb21a4f9b44863.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"></p>
+<h3 id="软件准备">软件准备</h3>
+<p>Python：<a href="https://link.jianshu.com/?t=https://www.python.org/downloads/">https://www.python.org/downloads/</a><br>
+VScode：<a href="https://link.jianshu.com/?t=https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
+<h3 id="软件安装">软件安装</h3>
+<h2 id="安装python">安装python</h2>
+<p>首先，我们安装Python到自己的电脑里。<br>
+切记，一定要记得勾选添加环境变量。<br>
+不然还得手动去配置python的环境变量。</p>
+<h3 id="检查python是否安装成功">检查python是否安装成功</h3>
+<p>检查方法如下：<br>
+1、打开cmd，输入python，点击回车。<br>
+2、输入import this。<br>
+3、退出、输入pip list，是否显示第三方的包。</p>
+<h2 id="安装第三方的包">安装第三方的包</h2>
+<p>通过python自带的pip工具，安装配置VScode需要的包。<br>
+flake8和yapf<br>
+flake8会检查编写代码时的不规范的地方和语法错误。<br>
+yapf是一个代码格式化工具，可以一键美化代码。<br>
+安装过程如下：<br>
+1、在cmd输入pip list检查是否已存在需要的包<br>
+2、输入pip install flake8下载安装flake8<br>
+3、输入pip install yapf下载安装yapf</p>
+<h2 id="打开vscode选择打开或选择目录">打开vscode选择打开或选择目录</h2>
+<p>新建一个为demo.py<br>
+输入一句<br>
+<code>print(&quot;Hello VScode&quot;)</code><br>
+连续按两次F5执行文件。<br>
+输出Hello VScode</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[python通过xlsxwriter模块将文字写入xlsx文件]]></title>
+        <id>https://info.ixiao9.com/python-xlsxwriter</id>
+        <link href="https://info.ixiao9.com/python-xlsxwriter"/>
+        <updated>2021-05-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[今天和大家一起学习通过python的xlsxwriter模块
+linux平台
+win平台
+都可以运行调试
+xlsxwriter模块主要用来生成excel表格，插入数据、插入图标等表格操作等。很重要的一点就是，它不仅仅只是生成数据，还能插入直...]]></summary>
+        <content type="html"><![CDATA[<p>今天和大家一起学习通过python的xlsxwriter模块<br>
+linux平台<br>
+win平台<br>
+都可以运行调试<br>
+xlsxwriter模块主要用来生成excel表格，插入数据、插入图标等表格操作等。很重要的一点就是，它不仅仅只是生成数据，还能插入直方图，饼图….，使用条件格式，合并单元格等等这些操作等<br>
+首先安装xlsxwriter模块</p>
+<p>在cmd小窗口里输入<br>
+<code>pip install xlsxwriter</code><br>
+接下来就可以开始使用 xlsxwriter 模块了，使用也非常简单，如下</p>
+<pre><code>
+#coding: utf-8
+import xlsxwriter    #调用模块
+  
+workbook = xlsxwriter.Workbook('demol.xlsx')     #新建文件
+
+worksheet = workbook.add_worksheet()             #新建sheet
+ 
+bold = workbook.add_format({'bold': True})
+
+worksheet.write('A1', 'Hello')  #测试插入数据 
+         
+worksheet.write('A2', &quot;World&quot;, bold)
+ 
+worksheet.write('B2', u'中文测试', bold)    #测试插入中文数据 
+ 
+worksheet.write(2, 0, 32)    #测试插入整数       
+       
+worksheet.write(3, 0, 35.5)    #测试插入小数
+ 
+worksheet.write(4, 0, '=SUM(A3:A4)')  #测试计算
+ 
+worksheet.insert_image('B5', r'C:\Users\x230\Pictures\MM.jpg')  #测试插入图片
+ # chart = workbook.add_chart({'type': 'column'})
+ # worksheet.insert_chart('A7', chart)
+workbook.close()  # 保存并关闭
+</code></pre>
+<p>以上就是完整代码，要注意的一点是，在如果要插入图片路径的时候，一定要记得在路径前加转义 ‘ r ’ 否则会报找不到路径的错误 ，如22行</p>
+<p>运行后会在py文件路径下生成一个xlsx文件<br>
+<img src="https://upload-images.jianshu.io/upload_images/6568097-37aa9e0876cec7fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"><br>
+打开看看数据有没有成功写入！</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/6568097-2b346796cc0cbaa0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"><br>
+数据成功写入  告辞！！！</p>
+]]></content>
+    </entry>
+</feed>

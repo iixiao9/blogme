@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" style="--theme-color: #262626; --link-color: #262626;">
+<head>
+  <meta charset="UTF-8">
+  <title>Window配置Vscode+Python3-7开发环境 - ixiao9</title>
+
+  <link rel="icon" href="">
+<!-- <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet"> -->
+<link rel="alternate" type="application/atom+xml" title="ixiao9 - Atom Feed" href="https://info.ixiao9.com/atom.xml">
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFCRR8Q57W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-182385326-1');
+    ga('set', 'dimension1', 'site/ZXiHMvKg1');
+    ga('set', 'dimension2', 'post/T0WPVJkaQ');
+    ga('send', 'pageview');
+    // gtag('set', {
+    //   'custom_map': {
+    //     'dimension1': 'siteId',
+    //     'dimension2': 'postId',
+    //   }
+    // })
+
+    // gtag('config', 'G-NFCRR8Q57W', {
+    //   'siteId': 'site/ZXiHMvKg1',
+    //   'postId': 'post/T0WPVJkaQ',
+    // });
+  </script>
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="用VScode配置Python开发环境
+
+软件准备
+Python：https://www.python.org/downloads/
+VScode：https://code.visualstudio.com/
+软件安装
+安装python
+首...">
+
+  <meta property="og:title" content="Window配置Vscode+Python3-7开发环境 - ixiao9">
+  <meta property="og:description" content="用VScode配置Python开发环境
+
+软件准备
+Python：https://www.python.org/downloads/
+VScode：https://code.visualstudio.com/
+软件安装
+安装python
+首...">
+  
+  <meta property="og:url" content="https://info.ixiao9.com/Vscode+Python3-7/">
+  <meta property="og:site_name" content="ixiao9">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:alt" content="Window配置Vscode+Python3-7开发环境">
+
+  <meta name="gridea:post_id" content="T0WPVJkaQ">
+
+  <link rel="canonical" href="https://info.ixiao9.com/Vscode+Python3-7">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.0.3/styles/a11y-light.css">
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/css/main.css">
+
+</head>
+<body>
+  
+    
+  
+  <div id="page">
+    <div class="mb-16 sticky top-0 z-20 bg-white">
+  <header class="py-4 flex items-baseline justify-between max-w-2xl mx-auto px-2">
+    <h1 class="text-lg text-center font-medium px-4 md:px-0 flex items-center">
+      <div class="site-logo-text font-normal">i</div>
+      <a href="/">ixiao9</a>
+    </h1>
+    <div class="hidden sm:flex justify-center">
+      
+    </div>
+    <div class="flex sm:hidden py-2 px-4 text-center cursor-pointer" @click="openMenu = true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+    </div>
+  </header>
+
+  <div class="fixed top-0 right-0 bottom-0 left-0 bg-white hidden" :style="{
+    display: openMenu ? 'block !important' : 'none',
+  }" v-if="openMenu">
+    <div class="py-4 px-2 flex justify-end" @click="openMenu = false">
+      <div class="flex py-2 px-4 text-center cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+      </div>
+    </div>
+    <div class="flex flex-col p-4">
+      
+    </div>
+  </div>
+</div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-2xl mx-auto px-6 md:px-2">
+        <div class="my-24 text-center">
+          <h1 class="text-2xl font-bold">Window配置Vscode+Python3-7开发环境</h1>
+          <div class="post-title-bar mx-auto rounded mt-4"></div>
+          <div class="text-gray-400 mt-4">2021.05.13</div>
+          <div class="flex justify-center mt-4">
+            
+              <a href="https://info.ixiao9.com/tags/Python" class="inline-flex items-center mr-4 text-sm text-gray-600">
+                <span class="mr-1">#</span>Python
+              </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sticky-bar" class="w-full sticky top-0 z-10 bg-white" style="height: 64px;"></div>
+    <div class="p-4 md:p-16 bg-white">
+      <div class="max-w-2xl mx-auto px-4 flex relative">
+        <section class="post-content flex-1 default-post-content max-w-2xl">
+          <div v-pre>
+            <h1 id="用vscode配置python开发环境">用VScode配置Python开发环境</h1>
+<p><img src="https://upload-images.jianshu.io/upload_images/6568097-6fcb21a4f9b44863.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"></p>
+<h3 id="软件准备">软件准备</h3>
+<p>Python：<a href="https://link.jianshu.com/?t=https://www.python.org/downloads/">https://www.python.org/downloads/</a><br>
+VScode：<a href="https://link.jianshu.com/?t=https://code.visualstudio.com/">https://code.visualstudio.com/</a></p>
+<h3 id="软件安装">软件安装</h3>
+<h2 id="安装python">安装python</h2>
+<p>首先，我们安装Python到自己的电脑里。<br>
+切记，一定要记得勾选添加环境变量。<br>
+不然还得手动去配置python的环境变量。</p>
+<h3 id="检查python是否安装成功">检查python是否安装成功</h3>
+<p>检查方法如下：<br>
+1、打开cmd，输入python，点击回车。<br>
+2、输入import this。<br>
+3、退出、输入pip list，是否显示第三方的包。</p>
+<h2 id="安装第三方的包">安装第三方的包</h2>
+<p>通过python自带的pip工具，安装配置VScode需要的包。<br>
+flake8和yapf<br>
+flake8会检查编写代码时的不规范的地方和语法错误。<br>
+yapf是一个代码格式化工具，可以一键美化代码。<br>
+安装过程如下：<br>
+1、在cmd输入pip list检查是否已存在需要的包<br>
+2、输入pip install flake8下载安装flake8<br>
+3、输入pip install yapf下载安装yapf</p>
+<h2 id="打开vscode选择打开或选择目录">打开vscode选择打开或选择目录</h2>
+<p>新建一个为demo.py<br>
+输入一句<br>
+<code>print(&quot;Hello VScode&quot;)</code><br>
+连续按两次F5执行文件。<br>
+输出Hello VScode</p>
+
+          </div>
+          <div class="py-4 text-gray-600 flex items-center justify-between">
+            <div class="">
+              <div class="text-sm text-gray-300">最后更新于: </div>
+              <div class="text-base font-medium">2021.05.13</div>
+            </div>
+            <!-- <div class="flex items-center text-sm text-gray-600">
+              <i class="ri-eye-line"></i> <span class="ml-2">{{ views }}</span>
+            </div> -->
+          </div>
+          <div>
+            <div id="disqus_thread"></div>
+          </div>
+        </section>
+        
+          <!-- <aside class="sticky toc-container flex-shrink-0 hidden md:block">
+            <div class="text-gray-600 mb-4">目 录</div>
+            <ul class="markdownIt-TOC">
+<li><a href="#%E7%94%A8vscode%E9%85%8D%E7%BD%AEpython%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83">用VScode配置Python开发环境</a><br>
+*
+<ul>
+<li><a href="#%E8%BD%AF%E4%BB%B6%E5%87%86%E5%A4%87">软件准备</a></li>
+<li><a href="#%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85">软件安装</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85python">安装python</a>
+<ul>
+<li><a href="#%E6%A3%80%E6%9F%A5python%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F">检查python是否安装成功</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85%E7%AC%AC%E4%B8%89%E6%96%B9%E7%9A%84%E5%8C%85">安装第三方的包</a></li>
+<li><a href="#%E6%89%93%E5%BC%80vscode%E9%80%89%E6%8B%A9%E6%89%93%E5%BC%80%E6%88%96%E9%80%89%E6%8B%A9%E7%9B%AE%E5%BD%95">打开vscode选择打开或选择目录</a></li>
+</ul>
+</li>
+</ul>
+
+          </aside> -->
+        
+      </div>
+    </div>
+    <div class="py-8 text-gray-300 text-center border-t border-gray-200">
+  Powered by Gridea
+</div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  
+  <script src="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/js/main.js"></script>
+
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  
+    
+<center>© 2020 Copyright 京ICP备17068508号-1
+</br><a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral"><img src="https://www.upyun.com/static/img/%E6%A0%B7%E5%BC%8F%E5%9B%BE.7cf927c.png" height="150" width="300" /></a></center>
+  
+</body>
+</html>

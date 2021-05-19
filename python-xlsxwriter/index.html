@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" style="--theme-color: #262626; --link-color: #262626;">
+<head>
+  <meta charset="UTF-8">
+  <title>python通过xlsxwriter模块将文字写入xlsx文件 - ixiao9</title>
+
+  <link rel="icon" href="">
+<!-- <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet"> -->
+<link rel="alternate" type="application/atom+xml" title="ixiao9 - Atom Feed" href="https://info.ixiao9.com/atom.xml">
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFCRR8Q57W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-182385326-1');
+    ga('set', 'dimension1', 'site/ZXiHMvKg1');
+    ga('set', 'dimension2', 'post/rM5Pf-IN9');
+    ga('send', 'pageview');
+    // gtag('set', {
+    //   'custom_map': {
+    //     'dimension1': 'siteId',
+    //     'dimension2': 'postId',
+    //   }
+    // })
+
+    // gtag('config', 'G-NFCRR8Q57W', {
+    //   'siteId': 'site/ZXiHMvKg1',
+    //   'postId': 'post/rM5Pf-IN9',
+    // });
+  </script>
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="今天和大家一起学习通过python的xlsxwriter模块
+linux平台
+win平台
+都可以运行调试
+xlsxwriter模块主要用来生成excel表格，插入数据、插入图标等表格操作等。很重要的一点就是，它不仅仅只是生成数据，还能插入直...">
+
+  <meta property="og:title" content="python通过xlsxwriter模块将文字写入xlsx文件 - ixiao9">
+  <meta property="og:description" content="今天和大家一起学习通过python的xlsxwriter模块
+linux平台
+win平台
+都可以运行调试
+xlsxwriter模块主要用来生成excel表格，插入数据、插入图标等表格操作等。很重要的一点就是，它不仅仅只是生成数据，还能插入直...">
+  
+  <meta property="og:url" content="https://info.ixiao9.com/python-xlsxwriter/">
+  <meta property="og:site_name" content="ixiao9">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:alt" content="python通过xlsxwriter模块将文字写入xlsx文件">
+
+  <meta name="gridea:post_id" content="rM5Pf-IN9">
+
+  <link rel="canonical" href="https://info.ixiao9.com/python-xlsxwriter">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.0.3/styles/a11y-light.css">
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/css/main.css">
+
+</head>
+<body>
+  
+    
+  
+  <div id="page">
+    <div class="mb-16 sticky top-0 z-20 bg-white">
+  <header class="py-4 flex items-baseline justify-between max-w-2xl mx-auto px-2">
+    <h1 class="text-lg text-center font-medium px-4 md:px-0 flex items-center">
+      <div class="site-logo-text font-normal">i</div>
+      <a href="/">ixiao9</a>
+    </h1>
+    <div class="hidden sm:flex justify-center">
+      
+    </div>
+    <div class="flex sm:hidden py-2 px-4 text-center cursor-pointer" @click="openMenu = true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+    </div>
+  </header>
+
+  <div class="fixed top-0 right-0 bottom-0 left-0 bg-white hidden" :style="{
+    display: openMenu ? 'block !important' : 'none',
+  }" v-if="openMenu">
+    <div class="py-4 px-2 flex justify-end" @click="openMenu = false">
+      <div class="flex py-2 px-4 text-center cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+      </div>
+    </div>
+    <div class="flex flex-col p-4">
+      
+    </div>
+  </div>
+</div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-2xl mx-auto px-6 md:px-2">
+        <div class="my-24 text-center">
+          <h1 class="text-2xl font-bold">python通过xlsxwriter模块将文字写入xlsx文件</h1>
+          <div class="post-title-bar mx-auto rounded mt-4"></div>
+          <div class="text-gray-400 mt-4">2021.05.13</div>
+          <div class="flex justify-center mt-4">
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sticky-bar" class="w-full sticky top-0 z-10 bg-white" style="height: 64px;"></div>
+    <div class="p-4 md:p-16 bg-white">
+      <div class="max-w-2xl mx-auto px-4 flex relative">
+        <section class="post-content flex-1 default-post-content max-w-2xl">
+          <div v-pre>
+            <p>今天和大家一起学习通过python的xlsxwriter模块<br>
+linux平台<br>
+win平台<br>
+都可以运行调试<br>
+xlsxwriter模块主要用来生成excel表格，插入数据、插入图标等表格操作等。很重要的一点就是，它不仅仅只是生成数据，还能插入直方图，饼图….，使用条件格式，合并单元格等等这些操作等<br>
+首先安装xlsxwriter模块</p>
+<p>在cmd小窗口里输入<br>
+<code>pip install xlsxwriter</code><br>
+接下来就可以开始使用 xlsxwriter 模块了，使用也非常简单，如下</p>
+<pre><code>
+#coding: utf-8
+import xlsxwriter    #调用模块
+  
+workbook = xlsxwriter.Workbook('demol.xlsx')     #新建文件
+
+worksheet = workbook.add_worksheet()             #新建sheet
+ 
+bold = workbook.add_format({'bold': True})
+
+worksheet.write('A1', 'Hello')  #测试插入数据 
+         
+worksheet.write('A2', &quot;World&quot;, bold)
+ 
+worksheet.write('B2', u'中文测试', bold)    #测试插入中文数据 
+ 
+worksheet.write(2, 0, 32)    #测试插入整数       
+       
+worksheet.write(3, 0, 35.5)    #测试插入小数
+ 
+worksheet.write(4, 0, '=SUM(A3:A4)')  #测试计算
+ 
+worksheet.insert_image('B5', r'C:\Users\x230\Pictures\MM.jpg')  #测试插入图片
+ # chart = workbook.add_chart({'type': 'column'})
+ # worksheet.insert_chart('A7', chart)
+workbook.close()  # 保存并关闭
+</code></pre>
+<p>以上就是完整代码，要注意的一点是，在如果要插入图片路径的时候，一定要记得在路径前加转义 ‘ r ’ 否则会报找不到路径的错误 ，如22行</p>
+<p>运行后会在py文件路径下生成一个xlsx文件<br>
+<img src="https://upload-images.jianshu.io/upload_images/6568097-37aa9e0876cec7fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"><br>
+打开看看数据有没有成功写入！</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/6568097-2b346796cc0cbaa0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png" loading="lazy"><br>
+数据成功写入  告辞！！！</p>
+
+          </div>
+          <div class="py-4 text-gray-600 flex items-center justify-between">
+            <div class="">
+              <div class="text-sm text-gray-300">最后更新于: </div>
+              <div class="text-base font-medium">2021.05.13</div>
+            </div>
+            <!-- <div class="flex items-center text-sm text-gray-600">
+              <i class="ri-eye-line"></i> <span class="ml-2">{{ views }}</span>
+            </div> -->
+          </div>
+          <div>
+            <div id="disqus_thread"></div>
+          </div>
+        </section>
+        
+      </div>
+    </div>
+    <div class="py-8 text-gray-300 text-center border-t border-gray-200">
+  Powered by Gridea
+</div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  
+  <script src="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/js/main.js"></script>
+
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  
+    
+<center>© 2020 Copyright 京ICP备17068508号-1
+</br><a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral"><img src="https://www.upyun.com/static/img/%E6%A0%B7%E5%BC%8F%E5%9B%BE.7cf927c.png" height="150" width="300" /></a></center>
+  
+</body>
+</html>

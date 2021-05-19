@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" style="--theme-color: #262626; --link-color: #262626;">
+<head>
+  <meta charset="UTF-8">
+  <title>kubeadm快速部署kubernetes - ixiao9</title>
+
+  <link rel="icon" href="">
+<!-- <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet"> -->
+<link rel="alternate" type="application/atom+xml" title="ixiao9 - Atom Feed" href="https://info.ixiao9.com/atom.xml">
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFCRR8Q57W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-182385326-1');
+    ga('set', 'dimension1', 'site/ZXiHMvKg1');
+    ga('set', 'dimension2', 'post/EnRAf6V2W');
+    ga('send', 'pageview');
+    // gtag('set', {
+    //   'custom_map': {
+    //     'dimension1': 'siteId',
+    //     'dimension2': 'postId',
+    //   }
+    // })
+
+    // gtag('config', 'G-NFCRR8Q57W', {
+    //   'siteId': 'site/ZXiHMvKg1',
+    //   'postId': 'post/EnRAf6V2W',
+    // });
+  </script>
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="kubeadm快速部署kubernetes
+[TOC]
+环境初始化
+
+
+
+IP
+角色
+安装软件
+
+
+
+
+192.168.1.3
+k8s-Master
+kube-apiserver kube-schduler kube-controller-...">
+
+  <meta property="og:title" content="kubeadm快速部署kubernetes - ixiao9">
+  <meta property="og:description" content="kubeadm快速部署kubernetes
+[TOC]
+环境初始化
+
+
+
+IP
+角色
+安装软件
+
+
+
+
+192.168.1.3
+k8s-Master
+kube-apiserver kube-schduler kube-controller-...">
+  
+  <meta property="og:url" content="https://info.ixiao9.com/fast-ops-kubeadm/">
+  <meta property="og:site_name" content="ixiao9">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:alt" content="kubeadm快速部署kubernetes">
+
+  <meta name="gridea:post_id" content="EnRAf6V2W">
+
+  <link rel="canonical" href="https://info.ixiao9.com/fast-ops-kubeadm">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.0.3/styles/a11y-light.css">
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/css/main.css">
+
+</head>
+<body>
+  
+    
+  
+  <div id="page">
+    <div class="mb-16 sticky top-0 z-20 bg-white">
+  <header class="py-4 flex items-baseline justify-between max-w-2xl mx-auto px-2">
+    <h1 class="text-lg text-center font-medium px-4 md:px-0 flex items-center">
+      <div class="site-logo-text font-normal">i</div>
+      <a href="/">ixiao9</a>
+    </h1>
+    <div class="hidden sm:flex justify-center">
+      
+    </div>
+    <div class="flex sm:hidden py-2 px-4 text-center cursor-pointer" @click="openMenu = true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+    </div>
+  </header>
+
+  <div class="fixed top-0 right-0 bottom-0 left-0 bg-white hidden" :style="{
+    display: openMenu ? 'block !important' : 'none',
+  }" v-if="openMenu">
+    <div class="py-4 px-2 flex justify-end" @click="openMenu = false">
+      <div class="flex py-2 px-4 text-center cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+      </div>
+    </div>
+    <div class="flex flex-col p-4">
+      
+    </div>
+  </div>
+</div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-2xl mx-auto px-6 md:px-2">
+        <div class="my-24 text-center">
+          <h1 class="text-2xl font-bold">kubeadm快速部署kubernetes</h1>
+          <div class="post-title-bar mx-auto rounded mt-4"></div>
+          <div class="text-gray-400 mt-4">2021.05.13</div>
+          <div class="flex justify-center mt-4">
+            
+              <a href="https://info.ixiao9.com/tags/kubeadm" class="inline-flex items-center mr-4 text-sm text-gray-600">
+                <span class="mr-1">#</span>kubeadm
+              </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sticky-bar" class="w-full sticky top-0 z-10 bg-white" style="height: 64px;"></div>
+    <div class="p-4 md:p-16 bg-white">
+      <div class="max-w-2xl mx-auto px-4 flex relative">
+        <section class="post-content flex-1 default-post-content max-w-2xl">
+          <div v-pre>
+            <h1 id="kubeadm快速部署kubernetes">kubeadm快速部署kubernetes</h1>
+<p>[TOC]</p>
+<h4 id="环境初始化">环境初始化</h4>
+<table>
+<thead>
+<tr>
+<th><strong>IP</strong></th>
+<th><strong>角色</strong></th>
+<th><strong>安装软件</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>192.168.1.3</td>
+<td>k8s-Master</td>
+<td>kube-apiserver <br/>kube-schduler <br/>kube-controller-manager <br/>docker <br/>flannel <br/>kubelet</td>
+</tr>
+<tr>
+<td>192.168.1.4</td>
+<td>k8s-node01</td>
+<td>kubelet <br/>kube-proxy <br/>docker <br/>flannel<br/>nginx<br/>dashboard</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>服务器最低配置要求</p>
+</blockquote>
+<p>内存4G</p>
+<p>处理器1</p>
+<p>每个处理器核心数2</p>
+<p>不满足要求会报错</p>
+<blockquote>
+<p>以下所有操作，在三台节点全部执行</p>
+</blockquote>
+<h5 id="关闭防火墙及selinux">关闭防火墙及selinux</h5>
+<pre><code class="language-shell">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
+$ sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config  &amp;&amp; setenforce 0
+</code></pre>
+<h5 id="关闭-swap-分区">关闭 swap 分区</h5>
+<pre><code class="language-shell">$ swapoff -a $ sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab 
+</code></pre>
+<h5 id="分别在其他主机上设置主机名以及配置hosts">分别在其他主机上设置主机名以及配置hosts</h5>
+<pre><code class="language-shell">$ hostnamectl set-hostname k8s-master
+$ hostnamectl set-hostname k8s-node01
+$ hostnamectl set-hostname k8s-&quot;替换&quot;
+</code></pre>
+<h5 id="在所有主机增加hosts">在所有主机增加hosts</h5>
+<pre><code class="language-shell">主masterIP k8s-master
+从nodeIP k8s-node01
+</code></pre>
+<h5 id="内核调整将桥接的ipv4流量传递到iptables的链">内核调整,将桥接的IPv4流量传递到iptables的链</h5>
+<pre><code class="language-shell">cat &gt; /etc/sysctl.d/k8s.conf &lt;&lt;EOF
+
+net.bridge.bridge-nf-call-ip6tables = 1
+
+net.bridge.bridge-nf-call-iptables = 1
+
+EOF
+
+sysctl --system
+</code></pre>
+<h5 id="设置系统时区并同步时间服务器">设置系统时区并同步时间服务器</h5>
+<pre><code class="language-shell">$ yum install -y ntpdate
+$ ntpdate time.windows.com
+</code></pre>
+<h5 id="docker安装">docker安装</h5>
+<pre><code class="language-shell">$ wget https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo -O /etc/yum.repos.d/docker-ce.repo
+$ yum -y install docker-ce-18.06.1.ce-3.el7
+</code></pre>
+<h5 id="修改docker文件驱动">修改docker文件驱动</h5>
+<p>文件驱动默认由<code>systemd</code>改成<code>cgroupfs</code>, 而我们安装的<code>docker</code>使用的文件驱动是<code>systemd</code>, 造成不一致, 导致镜像无法启动</p>
+<p>docker info查看</p>
+<pre><code class="language-shell">$ Cgroup Driver: systemd
+</code></pre>
+<p>修改或创建/etc/docker/daemon.json，加入下面的内容：</p>
+<pre><code class="language-shell">$ mkdir -p /etc/docker/
+$ vi /etc/docker/daemon.json
+{
+  &quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]
+}
+</code></pre>
+<p>启动docker:</p>
+<pre><code class="language-shell">$ systemctl enable docker &amp;&amp; systemctl start docker
+$ docker --version
+Docker version 18.06.1-ce, build e68fc7a 
+</code></pre>
+<h5 id="添加kubernetes-yum软件源">添加kubernetes YUM软件源</h5>
+<pre><code class="language-shell">cat &gt; /etc/yum.repos.d/kubernetes.repo &lt;&lt; EOF
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+</code></pre>
+<h4 id="安装kubernetes组件">安装kubernetes组件</h4>
+<h5 id="安装kubeadmkubelet和kubectl">安装kubeadm,kubelet和kubectl</h5>
+<blockquote>
+<p>所有主机都需要安装， 由于版本更新频繁，这里指定版本号部署</p>
+</blockquote>
+<pre><code class="language-shell">$ yum install -y kubelet-1.15.0 kubeadm-1.15.0 kubectl-1.15.0
+$ systemctl enable kubelet
+</code></pre>
+<h5 id="上传镜像并加载">上传镜像并加载</h5>
+<h5 id="部署kubernetes-master">部署Kubernetes Master</h5>
+<blockquote>
+<p>只需要在Master 节点执行</p>
+</blockquote>
+<pre><code class="language-shell">$ kubeadm init \
+--apiserver-advertise-address=主节点IP \
+--image-repository registry.aliyuncs.com/google_containers \
+--kubernetes-version v1.15.0 \
+--service-cidr=10.1.0.0/16 \
+--pod-network-cidr=10.244.0.0/16
+</code></pre>
+<h5 id="执行效果">执行效果</h5>
+<pre><code class="language-shell">[init] Using Kubernetes version: v1.15.0
+[preflight] Running pre-flight checks
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[kubelet-start] Writing kubelet environment file with flags to file &quot;/var/lib/kubelet/kubeadm-flags.env&quot;
+[kubelet-start] Writing kubelet configuration to file &quot;/var/lib/kubelet/config.yaml&quot;
+[kubelet-start] Activating the kubelet service
+[certs] Using certificateDir folder &quot;/etc/kubernetes/pki&quot;
+[certs] Generating &quot;etcd/ca&quot; certificate and key
+[certs] Generating &quot;etcd/server&quot; certificate and key
+[certs] etcd/server serving cert is signed for DNS names [k8s-master localhost] and IPs [192.168.1.3 127.0.0.1 ::1]
+[certs] Generating &quot;etcd/peer&quot; certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [k8s-master localhost] and IPs [192.168.1.3 127.0.0.1 ::1]
+[certs] Generating &quot;apiserver-etcd-client&quot; certificate and key
+[certs] Generating &quot;etcd/healthcheck-client&quot; certificate and key
+[certs] Generating &quot;front-proxy-ca&quot; certificate and key
+[certs] Generating &quot;front-proxy-client&quot; certificate and key
+[certs] Generating &quot;ca&quot; certificate and key
+[certs] Generating &quot;apiserver&quot; certificate and key
+[certs] apiserver serving cert is signed for DNS names [k8s-master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.1.0.1 192.168.1.3]
+[certs] Generating &quot;apiserver-kubelet-client&quot; certificate and key
+[certs] Generating &quot;sa&quot; key and public key
+[kubeconfig] Using kubeconfig folder &quot;/etc/kubernetes&quot;
+[kubeconfig] Writing &quot;admin.conf&quot; kubeconfig file
+[kubeconfig] Writing &quot;kubelet.conf&quot; kubeconfig file
+[kubeconfig] Writing &quot;controller-manager.conf&quot; kubeconfig file
+[kubeconfig] Writing &quot;scheduler.conf&quot; kubeconfig file
+[control-plane] Using manifest folder &quot;/etc/kubernetes/manifests&quot;
+[control-plane] Creating static Pod manifest for &quot;kube-apiserver&quot;
+[control-plane] Creating static Pod manifest for &quot;kube-controller-manager&quot;
+[control-plane] Creating static Pod manifest for &quot;kube-scheduler&quot;
+[etcd] Creating static Pod manifest for local etcd in &quot;/etc/kubernetes/manifests&quot;
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory &quot;/etc/kubernetes/manifests&quot;. This can take up to 4m0s
+[apiclient] All control plane components are healthy after 30.502915 seconds
+[upload-config] Storing the configuration used in ConfigMap &quot;kubeadm-config&quot; in the &quot;kube-system&quot; Namespace
+[kubelet] Creating a ConfigMap &quot;kubelet-config-1.15&quot; in namespace kube-system with the configuration for the kubelets in the cluster
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node k8s-master as control-plane by adding the label &quot;node-role.kubernetes.io/master=''&quot;
+[mark-control-plane] Marking the node k8s-master as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: p9a3vu.oscq5han2y5z5wfr
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the &quot;cluster-info&quot; ConfigMap in the &quot;kube-public&quot; namespace
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run &quot;kubectl apply -f [podnetwork].yaml&quot; with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+#下面是将node节点加入master组命令
+kubeadm join 192.168.1.3:6443 --token p9a3vu.oscq5han2y5z5wfr \
+    --discovery-token-ca-cert-hash sha256:bc102f35fc9049eabfe12b91bdeac18cb4f10b410b5170a8d5f7fd6cf5e986cf 
+</code></pre>
+<h5 id="token问题默认跳过">token问题(默认跳过)</h5>
+<p>默认token的有效期为24小时，当过期之后，该token就不可用了，如果后续有nodes节点加入，重新生成新的token</p>
+<pre><code class="language-shell">$ kubeadm token create
+$ kubeadm token list
+</code></pre>
+<h5 id="根据提示创建文件夹">根据提示创建文件夹</h5>
+<pre><code class="language-shell">$ mkdir -p $HOME/.kube
+$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre>
+<h5 id="获取ca证书sha256编码hash值">获取ca证书sha256编码hash值</h5>
+<pre><code class="language-shell">$ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2&gt;/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+</code></pre>
+<h4 id="加入kubernetes-node">加入Kubernetes Node</h4>
+<blockquote>
+<p>node上都要执行加组命令</p>
+</blockquote>
+<h5 id="节点加入集群">节点加入集群</h5>
+<pre><code class="language-shell">kubeadm join 主IP:6443 --token 替换自己的token \
+    --discovery-token-ca-cert-hash 
+sha256:替换bc102f35fc9049eabfe12b91bdeac18cb4f10b410b5170a8d5f7fd6cf5e986cf 
+</code></pre>
+<h5 id="安装网络插件">安装网络插件</h5>
+<blockquote>
+<p>只需要在Master 节点执行</p>
+</blockquote>
+<p>将<code>kube-flannel.yml</code>文件上传到主节点中</p>
+<p>执行部署脚本</p>
+<pre><code class="language-shell">kubectl apply -f kube-flannel.yml
+</code></pre>
+<p>查看集群的node状态，安装完网络工具之后，只有显示如下状态，所有节点全部都Ready好了之后才能继续后面的操作</p>
+<pre><code class="language-shell">$ kubectl get nodes
+NAME         STATUS   ROLES    AGE     VERSION
+k8s-master   Ready    master   37m     v1.15.0
+k8s-node01   Ready    &lt;none&gt;   5m22s   v1.15.0
+k8s-node02   Ready    &lt;none&gt;   5m18s   v1.15.0
+$ kubectl get pod -n kube-system
+NAME                                 READY   STATUS    RESTARTS   AGE
+coredns-bccdc95cf-h2ngj              1/1     Running   0          14m
+coredns-bccdc95cf-m78lt              1/1     Running   0          14m
+etcd-k8s-master                      1/1     Running   0          13m
+kube-apiserver-k8s-master            1/1     Running   0          13m
+kube-controller-manager-k8s-master   1/1     Running   0          13m
+kube-flannel-ds-amd64-j774f          1/1     Running   0          9m48s
+kube-flannel-ds-amd64-t8785          1/1     Running   0          9m48s
+kube-flannel-ds-amd64-wgbtz          1/1     Running   0          9m48s
+kube-proxy-ddzdx                     1/1     Running   0          14m
+kube-proxy-nwhzt                     1/1     Running   0          14m
+kube-proxy-p64rw                     1/1     Running   0          13m
+kube-scheduler-k8s-master            1/1     Running   0          13m
+</code></pre>
+<p>只有全部都为1/1则可以成功执行后续步骤 如果flannel需检查网络情况，重新进行如下操作</p>
+<pre><code class="language-shell">kubectl delete -f kube-flannel.yml
+</code></pre>
+<p>然后重新执行部署脚本</p>
+<pre><code class="language-shell">kubectl apply -f kube-flannel.yml
+</code></pre>
+<h4 id="测试kubernetes集群">测试Kubernetes集群</h4>
+<p>在Kubernetes集群中创建一个pod，然后暴露端口，验证是否正常访问：</p>
+<pre><code class="language-shell">$ kubectl create deployment nginx --image=nginx
+deployment.apps/nginx created
+
+$ kubectl expose deployment nginx --port=80 --type=NodePort
+service/nginx exposed
+
+$ kubectl get pods,svc
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/nginx-554b9c67f9-wf5lm   1/1     Running   0          24s
+
+NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+service/kubernetes   ClusterIP   10.1.0.1       &lt;none&gt;        443/TCP        39m
+service/nginx        NodePort    10.1.224.251   &lt;none&gt;        80:30962/TCP   9
+</code></pre>
+<p>访问地址：http://NodeIP:Port ,此例就是：http://192.168.1.3:30962</p>
+<h4 id="扩展">扩展</h4>
+<h5 id="部署-dashboards">部署 Dashboards</h5>
+<p>上传<code>kubernetes-dashboard.yaml</code>文件</p>
+<p>执行部署命令</p>
+<pre><code class="language-shell">$ kubectl create -f kubernetes-dashboard.yaml
+</code></pre>
+<p>创建完成后，检查相关服务运行状态</p>
+<pre><code class="language-shell">$ kubectl get deployment kubernetes-dashboard -n kube-system
+
+$ kubectl get pods -n kube-system -o wide
+
+$ kubectl get services -n kube-system
+
+$ netstat -ntlp|grep 30001
+</code></pre>
+<p>在Firefox浏览器输入Dashboard访问地址</p>
+<blockquote>
+<p>密钥页面未配置之前无法打开，务必使用Firefox浏览器打开</p>
+</blockquote>
+<p>查看访问Dashboard的认证令牌</p>
+<pre><code class="language-shell">$ kubectl create serviceaccount  dashboard-admin -n kube-system
+
+$ kubectl create clusterrolebinding  dashboard-admin --clusterrole=cluster-admin --serviceaccount=kube-system:dashboard-admin
+
+$ kubectl describe secrets -n kube-system $(kubectl -n kube-system get secret | awk '/dashboard-admin/{print $1}')
+</code></pre>
+<p>使用输出的token登录Dashboard</p>
+
+          </div>
+          <div class="py-4 text-gray-600 flex items-center justify-between">
+            <div class="">
+              <div class="text-sm text-gray-300">最后更新于: </div>
+              <div class="text-base font-medium">2021.05.13</div>
+            </div>
+            <!-- <div class="flex items-center text-sm text-gray-600">
+              <i class="ri-eye-line"></i> <span class="ml-2">{{ views }}</span>
+            </div> -->
+          </div>
+          <div>
+            <div id="disqus_thread"></div>
+          </div>
+        </section>
+        
+          <!-- <aside class="sticky toc-container flex-shrink-0 hidden md:block">
+            <div class="text-gray-600 mb-4">目 录</div>
+            <ul class="markdownIt-TOC">
+<li><a href="#kubeadm%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2kubernetes">kubeadm快速部署kubernetes</a><br>
+*<br>
+*<br>
+* <a href="#%E7%8E%AF%E5%A2%83%E5%88%9D%E5%A7%8B%E5%8C%96">环境初始化</a><br>
+* <a href="#%E5%85%B3%E9%97%AD%E9%98%B2%E7%81%AB%E5%A2%99%E5%8F%8Aselinux">关闭防火墙及selinux</a><br>
+* <a href="#%E5%85%B3%E9%97%AD-swap-%E5%88%86%E5%8C%BA">关闭 swap 分区</a><br>
+* <a href="#%E5%88%86%E5%88%AB%E5%9C%A8%E5%85%B6%E4%BB%96%E4%B8%BB%E6%9C%BA%E4%B8%8A%E8%AE%BE%E7%BD%AE%E4%B8%BB%E6%9C%BA%E5%90%8D%E4%BB%A5%E5%8F%8A%E9%85%8D%E7%BD%AEhosts">分别在其他主机上设置主机名以及配置hosts</a><br>
+* <a href="#%E5%9C%A8%E6%89%80%E6%9C%89%E4%B8%BB%E6%9C%BA%E5%A2%9E%E5%8A%A0hosts">在所有主机增加hosts</a><br>
+* <a href="#%E5%86%85%E6%A0%B8%E8%B0%83%E6%95%B4%E5%B0%86%E6%A1%A5%E6%8E%A5%E7%9A%84ipv4%E6%B5%81%E9%87%8F%E4%BC%A0%E9%80%92%E5%88%B0iptables%E7%9A%84%E9%93%BE">内核调整,将桥接的IPv4流量传递到iptables的链</a><br>
+* <a href="#%E8%AE%BE%E7%BD%AE%E7%B3%BB%E7%BB%9F%E6%97%B6%E5%8C%BA%E5%B9%B6%E5%90%8C%E6%AD%A5%E6%97%B6%E9%97%B4%E6%9C%8D%E5%8A%A1%E5%99%A8">设置系统时区并同步时间服务器</a><br>
+* <a href="#docker%E5%AE%89%E8%A3%85">docker安装</a><br>
+* <a href="#%E4%BF%AE%E6%94%B9docker%E6%96%87%E4%BB%B6%E9%A9%B1%E5%8A%A8">修改docker文件驱动</a><br>
+* <a href="#%E6%B7%BB%E5%8A%A0kubernetes-yum%E8%BD%AF%E4%BB%B6%E6%BA%90">添加kubernetes YUM软件源</a><br>
+* <a href="#%E5%AE%89%E8%A3%85kubernetes%E7%BB%84%E4%BB%B6">安装kubernetes组件</a><br>
+* <a href="#%E5%AE%89%E8%A3%85kubeadmkubelet%E5%92%8Ckubectl">安装kubeadm,kubelet和kubectl</a><br>
+* <a href="#%E4%B8%8A%E4%BC%A0%E9%95%9C%E5%83%8F%E5%B9%B6%E5%8A%A0%E8%BD%BD">上传镜像并加载</a><br>
+* <a href="#%E9%83%A8%E7%BD%B2kubernetes-master">部署Kubernetes Master</a><br>
+* <a href="#%E6%89%A7%E8%A1%8C%E6%95%88%E6%9E%9C">执行效果</a><br>
+* <a href="#token%E9%97%AE%E9%A2%98%E9%BB%98%E8%AE%A4%E8%B7%B3%E8%BF%87">token问题(默认跳过)</a><br>
+* <a href="#%E6%A0%B9%E6%8D%AE%E6%8F%90%E7%A4%BA%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9">根据提示创建文件夹</a><br>
+* <a href="#%E8%8E%B7%E5%8F%96ca%E8%AF%81%E4%B9%A6sha256%E7%BC%96%E7%A0%81hash%E5%80%BC">获取ca证书sha256编码hash值</a><br>
+* <a href="#%E5%8A%A0%E5%85%A5kubernetes-node">加入Kubernetes Node</a><br>
+* <a href="#%E8%8A%82%E7%82%B9%E5%8A%A0%E5%85%A5%E9%9B%86%E7%BE%A4">节点加入集群</a><br>
+* <a href="#%E5%AE%89%E8%A3%85%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6">安装网络插件</a><br>
+* <a href="#%E6%B5%8B%E8%AF%95kubernetes%E9%9B%86%E7%BE%A4">测试Kubernetes集群</a><br>
+* <a href="#%E6%89%A9%E5%B1%95">扩展</a><br>
+* <a href="#%E9%83%A8%E7%BD%B2-dashboards">部署 Dashboards</a></li>
+</ul>
+
+          </aside> -->
+        
+      </div>
+    </div>
+    <div class="py-8 text-gray-300 text-center border-t border-gray-200">
+  Powered by Gridea
+</div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  
+  <script src="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/js/main.js"></script>
+
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  
+    
+<center>© 2020 Copyright 京ICP备17068508号-1
+</br><a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral"><img src="https://www.upyun.com/static/img/%E6%A0%B7%E5%BC%8F%E5%9B%BE.7cf927c.png" height="150" width="300" /></a></center>
+  
+</body>
+</html>

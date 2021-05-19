@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" style="--theme-color: #262626; --link-color: #262626;">
+<head>
+  <meta charset="UTF-8">
+  <title>Cassandra数据备份与迁移 - ixiao9</title>
+
+  <link rel="icon" href="">
+<!-- <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet"> -->
+<link rel="alternate" type="application/atom+xml" title="ixiao9 - Atom Feed" href="https://info.ixiao9.com/atom.xml">
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-NFCRR8Q57W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  </script> -->
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-182385326-1');
+    ga('set', 'dimension1', 'site/ZXiHMvKg1');
+    ga('set', 'dimension2', 'post/dmebPhlA2');
+    ga('send', 'pageview');
+    // gtag('set', {
+    //   'custom_map': {
+    //     'dimension1': 'siteId',
+    //     'dimension2': 'postId',
+    //   }
+    // })
+
+    // gtag('config', 'G-NFCRR8Q57W', {
+    //   'siteId': 'site/ZXiHMvKg1',
+    //   'postId': 'post/dmebPhlA2',
+    // });
+  </script>
+
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="
+注意备份的时候schema也要备份一下，否则不能恢复快照！
+
+单点备份
+1.备份单个keyspace schema
+cqlsh -e &amp;quot;DESC KEYSPACE user&amp;quot; &amp;gt; user_schema.cql
+...">
+
+  <meta property="og:title" content="Cassandra数据备份与迁移 - ixiao9">
+  <meta property="og:description" content="
+注意备份的时候schema也要备份一下，否则不能恢复快照！
+
+单点备份
+1.备份单个keyspace schema
+cqlsh -e &amp;quot;DESC KEYSPACE user&amp;quot; &amp;gt; user_schema.cql
+...">
+  
+  <meta property="og:url" content="https://info.ixiao9.com/cassandra/">
+  <meta property="og:site_name" content="ixiao9">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image:alt" content="Cassandra数据备份与迁移">
+
+  <meta name="gridea:post_id" content="dmebPhlA2">
+
+  <link rel="canonical" href="https://info.ixiao9.com/cassandra">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.0.3/styles/a11y-light.css">
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/css/main.css">
+
+</head>
+<body>
+  
+    
+  
+  <div id="page">
+    <div class="mb-16 sticky top-0 z-20 bg-white">
+  <header class="py-4 flex items-baseline justify-between max-w-2xl mx-auto px-2">
+    <h1 class="text-lg text-center font-medium px-4 md:px-0 flex items-center">
+      <div class="site-logo-text font-normal">i</div>
+      <a href="/">ixiao9</a>
+    </h1>
+    <div class="hidden sm:flex justify-center">
+      
+    </div>
+    <div class="flex sm:hidden py-2 px-4 text-center cursor-pointer" @click="openMenu = true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+    </div>
+  </header>
+
+  <div class="fixed top-0 right-0 bottom-0 left-0 bg-white hidden" :style="{
+    display: openMenu ? 'block !important' : 'none',
+  }" v-if="openMenu">
+    <div class="py-4 px-2 flex justify-end" @click="openMenu = false">
+      <div class="flex py-2 px-4 text-center cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+      </div>
+    </div>
+    <div class="flex flex-col p-4">
+      
+    </div>
+  </div>
+</div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-2xl mx-auto px-6 md:px-2">
+        <div class="my-24 text-center">
+          <h1 class="text-2xl font-bold">Cassandra数据备份与迁移</h1>
+          <div class="post-title-bar mx-auto rounded mt-4"></div>
+          <div class="text-gray-400 mt-4">2021.05.13</div>
+          <div class="flex justify-center mt-4">
+            
+              <a href="https://info.ixiao9.com/tags/Cassandra" class="inline-flex items-center mr-4 text-sm text-gray-600">
+                <span class="mr-1">#</span>Cassandra
+              </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="sticky-bar" class="w-full sticky top-0 z-10 bg-white" style="height: 64px;"></div>
+    <div class="p-4 md:p-16 bg-white">
+      <div class="max-w-2xl mx-auto px-4 flex relative">
+        <section class="post-content flex-1 default-post-content max-w-2xl">
+          <div v-pre>
+            <blockquote>
+<p>注意备份的时候schema也要备份一下，否则不能恢复快照！</p>
+</blockquote>
+<h2 id="单点备份">单点备份</h2>
+<p>1.备份单个keyspace schema<br>
+<code>cqlsh -e &quot;DESC KEYSPACE user&quot; &gt; user_schema.cql</code><br>
+2.备份整个database schema<br>
+<code>cqlsh -e &quot;DESC SCHEMA&quot; &gt; db_schema.cql</code></p>
+<p>3.导入keyspace schema<br>
+在 user_schema.cql所在的目录下打开cqlsh:<br>
+<code>source 'user_schema.cql'</code><br>
+4.导入database schema:<br>
+在db_schema.cql所在的目录下打开cqlsh:<br>
+<code>source 'db_schema.cql'</code><br>
+5.备份单个keyspace数据<br>
+<code>bin/nodetool snapshot -t 20171130 user</code><br>
+6.备份所有的keyspace<br>
+<code>bin/nodetool snapshot -t 20171130</code></p>
+<p>-t后面指定快照的名字，备份好的数据在这个目录下<br>
+<code>$CASSANDRA_HOME/data/yourkeyspace/table-uuid/snapshots/20171130</code></p>
+<p>7.使用脚本将快照拷贝出来<br>
+将如下脚本保存为copy.sh，注意修改keyspacePath和dstKeyspacePath的值。 <strong>这个脚本只拷贝某一个keyspace的快照</strong></p>
+<pre><code>#!/bin/bashkeyspacePath=&quot;cassandra-3.11.1/data/data/your_keysapce_name&quot;currentIp=`ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/'`dstKeyspacePath=&quot;/home/master/beifen/$currentIp/my_backup&quot;echo $currentIpif [ ! -x &quot;$dstKeyspacePath&quot; ]; then      mkdir -p $dstKeyspacePathfi for dir in `ls $keyspacePath`; do (    currentTableName=`basename $dir`    echo &quot;currentTableName=$currentTableName&quot;    tableDstPath=&quot;$dstKeyspacePath/$currentTableName&quot;    echo &quot;tableDstPath=$tableDstPath&quot;    if [ ! -x &quot;$tableDstPath&quot; ]; then          mkdir -p $tableDstPath    fi     cp -r &quot;$keyspacePath/$dir/snapshots/&quot; $tableDstPath); done
+</code></pre>
+<p>给脚本赋予执行权限：<br>
+<code>chmod +x ./copy.sh</code><br>
+执行脚本：<br>
+<code>./copy.sh</code><br>
+8.恢复快照<br>
+将dstKeyspacePath下的SSTable(table-uuid)目录拷贝到新的cassandra的Data目录下，执行如下命令即可<br>
+<code>bin/nodetool refresh</code></p>
+<hr>
+<h2 id="集群备份">集群备份</h2>
+<p>直接从一个集群导到另一个集群：</p>
+<p>1.memTable数据刷新到SSTable<br>
+<code>bin/nodetool flush</code></p>
+<p>2.源集群导出schema</p>
+<p><code>cqlsh 192.168.40.x -e &quot;DESC KEYSPACE your_keyspace&quot; &gt; your_keyspace_schema.cql</code></p>
+<p>将<code>your_keyspace_schema.cql</code> 拷贝到目录集群某个目录下，然后进入到这个目录，打开cqlsh。<br>
+<code>source 'your_keyspace_schema.cql'</code></p>
+<p>3.使用脚本直接导数据<br>
+<strong>该脚本只能导一个keyspace</strong><br>
+将如下脚本保存为 <code>migrate.sh</code>，注意修改keyspacePath和dstClusterIP。keyspacePath是源集群的keyspace所在目录，dstClusterIP是目标集群的IP，可以是多个。</p>
+<pre><code>#!/bin/bashkeyspacePath=&quot;cassandra-3.11.1/data/data/your_keyspace&quot;dstClusterIP=192.168.40.1,192.168.40.2,192.168.40.3for dir in `ls $keyspacePath`; do (    sstableloader -d $dstClusterIP -t 100 &quot;$keyspacePath/$dir&quot;); done
+</code></pre>
+<p>脚本赋上执行权限：<br>
+<code>chmod +x ./migrate.sh</code><br>
+执行脚本，（请确保你的<code>PATH</code>环境变量里配置过Cassandra的路径）<br>
+<code>./migrate.sh</code></p>
+<p>如果要备份所有的数据：</p>
+<pre><code>#!/bin/bashsrcDataPath=&quot;/data/janus/apache-cassandra-3.11.1/data/data&quot;# 可以是多个IP，逗号分隔dstClusterIP=192.168.40.13 for keyspacePath in `ls $srcDataPath`; do (    echo &quot;currentkeyspace=$keyspacePath&quot;    for table in `ls $srcDataPath/$keyspacePath`; do (        echo &quot;$srcDataPath/$keyspacePath/$table&quot;        sstableloader -d $dstClusterIP -t 100 &quot;$srcDataPath/$keyspacePath/$table&quot;    );done);done
+</code></pre>
+<p>dstClusterIP 后面指定的是目标集群的IP，可以是多个IP。根据你的实际情况修改之。</p>
+<p>srcDataPath 是源集群的数据目录。根据你的实际情况修改之。</p>
+<p>执行脚本的时候，控制台会打印出当前备份的进度。</p>
+
+          </div>
+          <div class="py-4 text-gray-600 flex items-center justify-between">
+            <div class="">
+              <div class="text-sm text-gray-300">最后更新于: </div>
+              <div class="text-base font-medium">2021.05.13</div>
+            </div>
+            <!-- <div class="flex items-center text-sm text-gray-600">
+              <i class="ri-eye-line"></i> <span class="ml-2">{{ views }}</span>
+            </div> -->
+          </div>
+          <div>
+            <div id="disqus_thread"></div>
+          </div>
+        </section>
+        
+          <!-- <aside class="sticky toc-container flex-shrink-0 hidden md:block">
+            <div class="text-gray-600 mb-4">目 录</div>
+            <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%8D%95%E7%82%B9%E5%A4%87%E4%BB%BD">单点备份</a></li>
+<li><a href="#%E9%9B%86%E7%BE%A4%E5%A4%87%E4%BB%BD">集群备份</a></li>
+</ul>
+</li>
+</ul>
+
+          </aside> -->
+        
+      </div>
+    </div>
+    <div class="py-8 text-gray-300 text-center border-t border-gray-200">
+  Powered by Gridea
+</div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  
+  <script src="//cdn.jsdelivr.net/npm/@gridea/theme@1.0.8/js/main.js"></script>
+
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+  
+    
+<center>© 2020 Copyright 京ICP备17068508号-1
+</br><a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral"><img src="https://www.upyun.com/static/img/%E6%A0%B7%E5%BC%8F%E5%9B%BE.7cf927c.png" height="150" width="300" /></a></center>
+  
+</body>
+</html>
